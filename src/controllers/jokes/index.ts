@@ -335,13 +335,13 @@ const verifyJoke = async (req: Request, res: Response): Promise<void> => {
 const updateJoke = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
-      params: { jokeId, language },
+      params: { id, language },
       body,
     } = req
 
     let joke: IJoke
 
-    const findJoke = await Joke.findOne({ jokeId, language })
+    const findJoke = await Joke.findOne({ id, language })
     if (findJoke?.private === true && body.private === false) {
       // const subject = 'A joke needs verification'
       // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -361,7 +361,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       //     console.error(EErrorSendingMail[body.language as ELanguage], error)
       //   )
       const subject = 'A joke needs verification'
-      const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
+      const message = `${body.jokeId}, ${body._id}, ${body.type}, ${body.category}, ${
         body.language
       }, ${body.safe}, ${Object.entries(body.flags)
         .filter(([key, value]) => value)
@@ -372,7 +372,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
         body.type === EJokeType.single && body.body ? body.body : ''
       }`
       const adminEmail = process.env.NODEMAILER_USER || ''
-      const link = `${process.env.BASE_URI}/api/jokes/${body.jokeId}/verification`
+      const link = `${process.env.BASE_URI}/api/jokes/${body._id}/verification`
       const language = (body.language as ELanguage) ?? 'en'
 
       sendMail(subject, message, adminEmail, language, link)
@@ -396,10 +396,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
         })
       return
     } else {
-      const updateJoke: IJoke | null = await Joke.findOneAndUpdate(
-        { jokeId, language },
-        body
-      )
+      const updateJoke: IJoke | null = await Joke.findOneAndUpdate({ id, language }, body)
       joke = mapToJoke(updateJoke)
 
       res
