@@ -339,6 +339,8 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       body,
     } = req
 
+    const { _id, ...updateFields } = body
+
     let joke: IJoke
 
     const findJoke = await Joke.findOne({ JokeId, language })
@@ -398,7 +400,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
     } else {
       const updateJoke: IJoke | null = await Joke.findOneAndUpdate(
         { JokeId, language },
-        body
+        updateFields
       )
       joke = mapToJoke(updateJoke)
 
