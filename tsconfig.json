@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "dist",
+        "rootDir": "src",
+        "strict": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+        "src/**/*",
+        "tsconfig.json",
+        "src/updateUser.js"
+    ],
+    "exclude": [
+        "src/types/*.ts",
+        "node_modules",
+        ".vscode"
+    ]
+}
