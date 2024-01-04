@@ -335,13 +335,13 @@ const verifyJoke = async (req: Request, res: Response): Promise<void> => {
 const updateJoke = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
-      params: { id, language },
+      params: { JokeId, language },
       body,
     } = req
 
     let joke: IJoke
 
-    const findJoke = await Joke.findOne({ id, language })
+    const findJoke = await Joke.findOne({ JokeId, language })
     if (findJoke?.private === true && body.private === false) {
       // const subject = 'A joke needs verification'
       // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -396,7 +396,10 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
         })
       return
     } else {
-      const updateJoke: IJoke | null = await Joke.findOneAndUpdate({ id, language }, body)
+      const updateJoke: IJoke | null = await Joke.findOneAndUpdate(
+        { JokeId, language },
+        body
+      )
       joke = mapToJoke(updateJoke)
 
       res

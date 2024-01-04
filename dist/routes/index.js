@@ -46,7 +46,7 @@ router.get('/api/users/:id/safe/:safe/jokes', jokes_1.getJokesByUserAndSafe);
 //router.put('/api/users/request-new-token', refreshExpiredToken)
 router.get('/api/jokes/:jokeId/:language/:category/:type', jokes_1.findJokeByJokeIdLanguageCategoryType);
 router.post('/api/jokes', jokes_1.addJoke);
-router.put('/api/jokes/:id/:language', jokes_1.updateJoke);
+router.put('/api/jokes/:jokeId/:language', jokes_1.updateJoke);
 router.get('/api/jokes/:id/verification', jokes_1.verifyJoke);
 router.get('/api/jokes', jokes_1.getJokes);
 router.get('/api/jokes/user/:id/', jokes_1.getJokesByUserId);
