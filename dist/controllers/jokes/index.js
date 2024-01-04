@@ -287,9 +287,9 @@ exports.verifyJoke = verifyJoke;
 const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _l;
     try {
-        const { params: { jokeId, language }, body, } = req;
+        const { params: { id, language }, body, } = req;
         let joke;
-        const findJoke = yield joke_1.Joke.findOne({ jokeId, language });
+        const findJoke = yield joke_1.Joke.findOne({ id, language });
         if ((findJoke === null || findJoke === void 0 ? void 0 : findJoke.private) === true && body.private === false) {
             // const subject = 'A joke needs verification'
             // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -308,12 +308,12 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             //     console.error(EErrorSendingMail[body.language as ELanguage], error)
             //   )
             const subject = 'A joke needs verification';
-            const message = `${body.jokeId}, ${body.type}, ${body.category}, ${body.language}, ${body.safe}, ${Object.entries(body.flags)
+            const message = `${body.jokeId}, ${body._id}, ${body.type}, ${body.category}, ${body.language}, ${body.safe}, ${Object.entries(body.flags)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
                 .join(', ')}, ${body.user}, ${body.type === types_1.EJokeType.twopart && body.setup ? body.setup : ''}, ${body.type === types_1.EJokeType.twopart && body.delivery ? body.delivery : ''}, ${body.type === types_1.EJokeType.single && body.body ? body.body : ''}`;
             const adminEmail = process.env.NODEMAILER_USER || '';
-            const link = `${process.env.BASE_URI}/api/jokes/${body.jokeId}/verification`;
+            const link = `${process.env.BASE_URI}/api/jokes/${body._id}/verification`;
             const language = (_l = body.language) !== null && _l !== void 0 ? _l : 'en';
             (0, email_1.sendMail)(subject, message, adminEmail, language, link)
                 .then((response) => {
@@ -334,7 +334,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return;
         }
         else {
-            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ jokeId, language }, body);
+            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ id, language }, body);
             joke = mapToJoke(updateJoke);
             res
                 .status(200)
