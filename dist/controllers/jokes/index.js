@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyJoke = exports.deleteUserFromJoke = exports.getJokesByUserAndSafe = exports.getJokesByUserAndType = exports.getJokesByUserAndCategory = exports.getJokesByUserId = exports.findJokeByJokeIdLanguageCategoryType = exports.updateJoke = exports.addJoke = exports.getJokes = void 0;
 const types_1 = require("../../types");
@@ -288,6 +299,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     var _l;
     try {
         const { params: { JokeId, language }, body, } = req;
+        const { _id } = body, updateFields = __rest(body, ["_id"]);
         let joke;
         const findJoke = yield joke_1.Joke.findOne({ JokeId, language });
         if ((findJoke === null || findJoke === void 0 ? void 0 : findJoke.private) === true && body.private === false) {
@@ -334,7 +346,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return;
         }
         else {
-            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ JokeId, language }, body);
+            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ JokeId, language }, updateFields);
             joke = mapToJoke(updateJoke);
             res
                 .status(200)
