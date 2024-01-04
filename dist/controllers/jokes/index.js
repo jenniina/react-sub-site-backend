@@ -287,9 +287,9 @@ exports.verifyJoke = verifyJoke;
 const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _l;
     try {
-        const { params: { id, language }, body, } = req;
+        const { params: { JokeId, language }, body, } = req;
         let joke;
-        const findJoke = yield joke_1.Joke.findOne({ id, language });
+        const findJoke = yield joke_1.Joke.findOne({ JokeId, language });
         if ((findJoke === null || findJoke === void 0 ? void 0 : findJoke.private) === true && body.private === false) {
             // const subject = 'A joke needs verification'
             // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -334,7 +334,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return;
         }
         else {
-            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ id, language }, body);
+            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ JokeId, language }, body);
             joke = mapToJoke(updateJoke);
             res
                 .status(200)

@@ -116,7 +116,7 @@ router.get(
   findJokeByJokeIdLanguageCategoryType
 )
 router.post('/api/jokes', addJoke)
-router.put('/api/jokes/:id/:language', updateJoke)
+router.put('/api/jokes/:jokeId/:language', updateJoke)
 router.get('/api/jokes/:id/verification', verifyJoke)
 router.get('/api/jokes', getJokes)
 router.get('/api/jokes/user/:id/', getJokesByUserId)
