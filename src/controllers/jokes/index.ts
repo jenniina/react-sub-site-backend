@@ -53,7 +53,11 @@ const getJokes = async (req: Request, res: Response): Promise<void> => {
     const jokes: IJoke[] = await Joke.find()
     res.status(200).json(jokes)
   } catch (error) {
-    res.status(500).json({ message: 'An error occurred' })
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred',
+      error,
+    })
     console.error('Error:', error)
   }
 }
@@ -230,6 +234,7 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
           res.status(500).json({
             success: false,
             message: EErrorSendingMail[joke.language as keyof typeof EErrorSendingMail],
+            error,
           })
         })
     }
@@ -279,6 +284,7 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
       message:
         EAnErrorOccurredAddingTheJoke[req.body.language as ELanguage] ||
         'An error occurred adding the joke',
+      error,
     })
   }
 }
@@ -321,12 +327,15 @@ const verifyJoke = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({
           success: false,
           message: EErrorSendingMail[joke?.language as keyof typeof EErrorSendingMail],
+          error,
         })
       })
     //res.status(200).json({ message: 'Joke verified', joke })
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: `An error occurred: ${(error as Error)?.message} ${error as Error}`,
+      error,
     })
     console.error('Error:', error)
   }
@@ -394,13 +403,15 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
           res.status(500).json({
             success: false,
             message: EErrorSendingMail[language as keyof typeof EErrorSendingMail],
+            error,
           })
         })
       return
     } else {
       const updateJoke: IJoke | null = await Joke.findOneAndUpdate(
         { JokeId, language },
-        updateFields
+        updateFields,
+        { upsert: false }
       )
       joke = mapToJoke(updateJoke)
 
@@ -412,6 +423,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       message: EError[req.params.language as ELanguage] || 'An error occurred',
+      error,
     })
     console.error('Error:', error)
   }
@@ -435,13 +447,18 @@ const deleteUserFromJoke = async (req: Request, res: Response): Promise<void> =>
     }
 
     res.status(200).json({
+      success: true,
       message: EUserDeletedFromJoke[(joke?.language as ELanguage) ?? 'en'],
       joke,
     })
   } catch (error) {
     res
       .status(500)
-      .json({ message: EError[req.params.lang as ELanguage] || 'An error occurred' })
+      .json({
+        success: false,
+        message: EError[req.params.lang as ELanguage] || 'An error occurred',
+        error,
+      })
     console.error('Error:', error)
   }
 }
@@ -485,7 +502,11 @@ const findJokeByJokeIdLanguageCategoryType = async (
   } catch (error) {
     res
       .status(500)
-      .json({ message: EError[req.params.language as ELanguage] || 'An error occurred' })
+      .json({
+        success: false,
+        message: EError[req.params.language as ELanguage] || 'An error occurred',
+        error,
+      })
     console.error('Error:', error)
   }
 }
@@ -521,7 +542,11 @@ const getJokesByUserAndCategory = async (req: Request, res: Response): Promise<v
   } catch (error) {
     res
       .status(500)
-      .json({ message: EError[req.params.language as ELanguage] || 'An error occurred' })
+      .json({
+        success: false,
+        message: EError[req.params.language as ELanguage] || 'An error occurred',
+        error,
+      })
     console.error('Error:', error)
   }
 }
@@ -536,7 +561,11 @@ const getJokesByUserAndType = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     res
       .status(500)
-      .json({ message: EError[req.params.language as ELanguage] || 'An error occurred' })
+      .json({
+        success: false,
+        message: EError[req.params.language as ELanguage] || 'An error occurred',
+        error,
+      })
     console.error('Error:', error)
   }
 }
@@ -551,7 +580,11 @@ const getJokesByUserAndSafe = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     res
       .status(500)
-      .json({ message: EError[req.params.language as ELanguage] || 'An error occurred' })
+      .json({
+        success: false,
+        message: EError[req.params.language as ELanguage] || 'An error occurred',
+        error,
+      })
     console.error('Error:', error)
   }
 }
