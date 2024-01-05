@@ -273,10 +273,11 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
 
     //   joke = await new Joke(jokeData).save()
     // }
-
-    res
-      .status(201)
-      .json({ success: true, message: EJokeAdded[joke.language as ELanguage], joke })
+    else {
+      res
+        .status(201)
+        .json({ success: true, message: EJokeAdded[joke.language as ELanguage], joke })
+    }
   } catch (error) {
     console.error('Error:', error)
     res.status(500).json({
