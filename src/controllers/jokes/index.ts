@@ -353,7 +353,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
 
     let joke: IJoke
 
-    const findJoke = await Joke.findOne({ JokeId, language })
+    const findJoke = await Joke.findOne({ _id: body._id, language })
     if (findJoke?.private === true && body.private === false) {
       // const subject = 'A joke needs verification'
       // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -410,7 +410,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       return
     } else {
       const updateJoke: IJoke | null = await Joke.findOneAndUpdate(
-        { JokeId, language },
+        { _id: body._id, language: body.language },
         updateFields,
         { upsert: false }
       )
