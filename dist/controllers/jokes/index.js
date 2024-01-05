@@ -238,9 +238,11 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         //         }
         //   joke = await new Joke(jokeData).save()
         // }
-        res
-            .status(201)
-            .json({ success: true, message: EJokeAdded[joke.language], joke });
+        else {
+            res
+                .status(201)
+                .json({ success: true, message: EJokeAdded[joke.language], joke });
+        }
     }
     catch (error) {
         console.error('Error:', error);
