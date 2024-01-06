@@ -202,13 +202,14 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
 
     //Object.values(joke.flags).some(Boolean)
     if (joke.private === false) {
+      const author = await User.findOne({ _id: req.body.author })
       const subject = 'A joke needs verification'
       const message = `${joke._id}, ${joke.type}, ${joke.category}, ${joke.language}, ${
         joke.safe
       }, ${Object.entries(joke.flags)
         .filter(([key, value]) => value)
         .map(([key, value]) => key)
-        .join(', ')}, ${joke.user}, ${
+        .join(', ')}, ${author?.username}: ${joke.user}, ${
         joke.type === EJokeType.twopart && joke.setup ? joke.setup : ''
       }, ${joke.type === EJokeType.twopart && joke.delivery ? joke.delivery : ''}, ${
         joke.type === EJokeType.single && joke.joke ? joke.joke : ''
@@ -372,13 +373,14 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       //   .catch((error) =>
       //     console.error(EErrorSendingMail[body.language as ELanguage], error)
       //   )
+      const author = await User.findOne({ _id: req.body.author })
       const subject = 'A joke needs verification'
       const message = `${body.jokeId}, ${findJoke._id}, ${body.type}, ${body.category}, ${
         body.language
       }, ${body.safe}, ${Object.entries(body.flags)
         .filter(([key, value]) => value)
         .map(([key, value]) => key)
-        .join(', ')}, ${body.user}, ${
+        .join(', ')}, ${author?.username}: ${body.user}, ${
         body.type === EJokeType.twopart && body.setup ? body.setup : ''
       }, ${body.type === EJokeType.twopart && body.delivery ? body.delivery : ''}, ${
         body.type === EJokeType.single && body.body ? body.body : ''
