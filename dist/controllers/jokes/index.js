@@ -183,10 +183,10 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (joke.private === false) {
             const author = yield user_1.User.findOne({ _id: req.body.author });
             const subject = 'A joke needs verification';
-            const message = `${joke._id}, ${joke.type}, ${joke.category}, ${joke.language}, ${joke.safe}, ${Object.entries(joke.flags)
+            const message = ` ${author === null || author === void 0 ? void 0 : author.username}: ${joke.user}, ${joke._id}, ${joke.type}, ${joke.category}, ${joke.language}, ${joke.safe}, ${Object.entries(joke.flags)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
-                .join(', ')}, ${author === null || author === void 0 ? void 0 : author.username}: ${joke.user}, ${joke.type === types_1.EJokeType.twopart && joke.setup ? joke.setup : ''}, ${joke.type === types_1.EJokeType.twopart && joke.delivery ? joke.delivery : ''}, ${joke.type === types_1.EJokeType.single && joke.joke ? joke.joke : ''}`;
+                .join(', ')}, ${joke.type === types_1.EJokeType.twopart && joke.setup ? joke.setup : ''}, ${joke.type === types_1.EJokeType.twopart && joke.delivery ? joke.delivery : ''}, ${joke.type === types_1.EJokeType.single && joke.joke ? joke.joke : ''}`;
             const adminEmail = process.env.NODEMAILER_USER || '';
             const link = `${process.env.BASE_URI}/api/jokes/${joke._id}/verification`;
             const language = (_j = joke.language) !== null && _j !== void 0 ? _j : 'en';
@@ -360,23 +360,43 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             const adminEmail = process.env.NODEMAILER_USER || '';
             const link = `${process.env.BASE_URI}/api/jokes/${findJoke._id}/verification`;
             const language = (_l = body.language) !== null && _l !== void 0 ? _l : 'en';
-            (0, email_1.sendMail)(subject, message, adminEmail, language, link)
-                .then((response) => {
-                console.log(email_1.EEmailSent[body.language], response);
+            // sendMail(subject, message, adminEmail, language, link)
+            //   .then((response) => {
+            //     console.log(EEmailSent[body.language as ELanguage], response)
+            //     res.status(201).json({
+            //       success: true,
+            //       message:
+            //         EEmailSentToAdministratorPleaseWaitForApproval[
+            //           body.language as keyof typeof EEmailSentToAdministratorPleaseWaitForApproval
+            //         ],
+            //       joke,
+            //     })
+            //   })
+            //   .catch((error) => {
+            //     console.error(EErrorSendingMail[language as ELanguage], error)
+            //     res.status(500).json({
+            //       success: false,
+            //       message: EErrorSendingMail[language as keyof typeof EErrorSendingMail],
+            //       error,
+            //     })
+            //   })
+            try {
+                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, language, link);
+                console.log(email_1.EEmailSent[body.language], mailResponse);
                 res.status(201).json({
                     success: true,
                     message: types_1.EEmailSentToAdministratorPleaseWaitForApproval[body.language],
-                    joke,
+                    body,
                 });
-            })
-                .catch((error) => {
-                console.error(email_1.EErrorSendingMail[language], error);
+            }
+            catch (error) {
+                console.error(email_1.EErrorSendingMail[body.language], error);
                 res.status(500).json({
                     success: false,
-                    message: email_1.EErrorSendingMail[language],
+                    message: email_1.EErrorSendingMail[body.language],
                     error,
                 });
-            });
+            }
             return;
         }
         else {
