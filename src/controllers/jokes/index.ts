@@ -218,26 +218,45 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
       const link = `${process.env.BASE_URI}/api/jokes/${joke._id}/verification`
       const language = (joke.language as ELanguage) ?? 'en'
 
-      sendMail(subject, message, adminEmail, language, link)
-        .then((response) => {
-          console.log(EEmailSent[joke.language as ELanguage], response)
-          res.status(201).json({
-            success: true,
-            message:
-              EEmailSentToAdministratorPleaseWaitForApproval[
-                joke.language as keyof typeof EEmailSentToAdministratorPleaseWaitForApproval
-              ],
-            joke,
-          })
+      try {
+        const mailResponse = await sendMail(subject, message, adminEmail, language, link)
+        console.log(EEmailSent[joke.language as ELanguage], mailResponse)
+        res.status(201).json({
+          success: true,
+          message:
+            EEmailSentToAdministratorPleaseWaitForApproval[
+              joke.language as keyof typeof EEmailSentToAdministratorPleaseWaitForApproval
+            ],
+          joke,
         })
-        .catch((error) => {
-          console.error(EErrorSendingMail[joke.language as ELanguage], error)
-          res.status(500).json({
-            success: false,
-            message: EErrorSendingMail[joke.language as keyof typeof EErrorSendingMail],
-            error,
-          })
+      } catch (error) {
+        console.error(EErrorSendingMail[joke.language as ELanguage], error)
+        res.status(500).json({
+          success: false,
+          message: EErrorSendingMail[joke.language as keyof typeof EErrorSendingMail],
+          error,
         })
+      }
+      // sendMail(subject, message, adminEmail, language, link)
+      //   .then((response) => {
+      //     console.log(EEmailSent[joke.language as ELanguage], response)
+      //     res.status(201).json({
+      //       success: true,
+      //       message:
+      //         EEmailSentToAdministratorPleaseWaitForApproval[
+      //           joke.language as keyof typeof EEmailSentToAdministratorPleaseWaitForApproval
+      //         ],
+      //       joke,
+      //     })
+      //   })
+      //   .catch((error) => {
+      //     console.error(EErrorSendingMail[joke.language as ELanguage], error)
+      //     res.status(500).json({
+      //       success: false,
+      //       message: EErrorSendingMail[joke.language as keyof typeof EErrorSendingMail],
+      //       error,
+      //     })
+      //   })
     }
 
     // const existingJoke = await Joke.findOne(filter)
@@ -290,6 +309,7 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
     })
   }
 }
+
 const verifyJoke = async (req: Request, res: Response): Promise<void> => {
   enum EYourJokeHasBeenVerified {
     en = 'Your joke has been verified',

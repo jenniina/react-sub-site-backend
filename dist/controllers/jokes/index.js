@@ -190,23 +190,43 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const adminEmail = process.env.NODEMAILER_USER || '';
             const link = `${process.env.BASE_URI}/api/jokes/${joke._id}/verification`;
             const language = (_j = joke.language) !== null && _j !== void 0 ? _j : 'en';
-            (0, email_1.sendMail)(subject, message, adminEmail, language, link)
-                .then((response) => {
-                console.log(email_1.EEmailSent[joke.language], response);
+            try {
+                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, language, link);
+                console.log(email_1.EEmailSent[joke.language], mailResponse);
                 res.status(201).json({
                     success: true,
                     message: types_1.EEmailSentToAdministratorPleaseWaitForApproval[joke.language],
                     joke,
                 });
-            })
-                .catch((error) => {
+            }
+            catch (error) {
                 console.error(email_1.EErrorSendingMail[joke.language], error);
                 res.status(500).json({
                     success: false,
                     message: email_1.EErrorSendingMail[joke.language],
                     error,
                 });
-            });
+            }
+            // sendMail(subject, message, adminEmail, language, link)
+            //   .then((response) => {
+            //     console.log(EEmailSent[joke.language as ELanguage], response)
+            //     res.status(201).json({
+            //       success: true,
+            //       message:
+            //         EEmailSentToAdministratorPleaseWaitForApproval[
+            //           joke.language as keyof typeof EEmailSentToAdministratorPleaseWaitForApproval
+            //         ],
+            //       joke,
+            //     })
+            //   })
+            //   .catch((error) => {
+            //     console.error(EErrorSendingMail[joke.language as ELanguage], error)
+            //     res.status(500).json({
+            //       success: false,
+            //       message: EErrorSendingMail[joke.language as keyof typeof EErrorSendingMail],
+            //       error,
+            //     })
+            //   })
         }
         // const existingJoke = await Joke.findOne(filter)
         // let joke
