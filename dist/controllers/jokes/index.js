@@ -330,10 +330,12 @@ exports.verifyJoke = verifyJoke;
 const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _l;
     try {
-        const { params: { JokeId, language }, body, } = req;
+        const { 
+        // params: { _id },
+        body, } = req;
         const { _id } = body, updateFields = __rest(body, ["_id"]);
-        let joke;
-        const findJoke = yield joke_1.Joke.findOne({ _id: body._id, language });
+        const language = body.language;
+        const findJoke = yield joke_1.Joke.findOne({ _id: body._id });
         if ((findJoke === null || findJoke === void 0 ? void 0 : findJoke.private) === true && body.private === false) {
             // const subject = 'A joke needs verification'
             // const message = `${body.jokeId}, ${body.type}, ${body.category}, ${
@@ -400,11 +402,11 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return;
         }
         else {
-            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ _id: body._id, language: body.language }, updateFields, { upsert: false });
-            joke = mapToJoke(updateJoke);
+            const updateJoke = yield joke_1.Joke.findOneAndUpdate({ _id: body._id }, updateFields, { upsert: false });
+            //joke = mapToJoke(updateJoke)
             res
                 .status(200)
-                .json({ success: true, message: types_1.EJokeUpdated[language], joke });
+                .json({ success: true, message: types_1.EJokeUpdated[language], updateJoke });
         }
     }
     catch (error) {
