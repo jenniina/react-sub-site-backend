@@ -204,9 +204,11 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
     if (joke.private === false) {
       const author = await User.findOne({ _id: req.body.author })
       const subject = 'A joke needs verification'
-      const message = ` ${author?.username}: ${joke.user}, ${joke._id}, ${joke.type}, ${
-        joke.category
-      }, ${joke.language}, ${joke.safe}, ${Object.entries(joke.flags)
+      const message = ` ${author?.username}: ${author?.name}: ${joke.user}, ${
+        joke._id
+      }, ${joke.type}, ${joke.category}, ${joke.language}, ${joke.safe}, ${Object.entries(
+        joke.flags
+      )
         .filter(([key, value]) => value)
         .map(([key, value]) => key)
         .join(', ')}, ${
@@ -395,12 +397,14 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       //   )
       const author = await User.findOne({ _id: req.body.author })
       const subject = 'A joke needs verification'
-      const message = `${body.jokeId}, ${findJoke._id}, ${body.type}, ${body.category}, ${
-        body.language
-      }, ${body.safe}, ${Object.entries(body.flags)
+      const message = `${author?.username}: ${author?.name}: ${body.user}, ${
+        body.jokeId
+      }, ${findJoke._id}, ${body.type}, ${body.category}, ${body.language}, ${
+        body.safe
+      }, ${Object.entries(body.flags)
         .filter(([key, value]) => value)
         .map(([key, value]) => key)
-        .join(', ')}, ${author?.username}: ${body.user}, ${
+        .join(', ')}, ${
         body.type === EJokeType.twopart && body.setup ? body.setup : ''
       }, ${body.type === EJokeType.twopart && body.delivery ? body.delivery : ''}, ${
         body.type === EJokeType.single && body.body ? body.body : ''
