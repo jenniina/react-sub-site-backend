@@ -183,7 +183,7 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (joke.private === false) {
             const author = yield user_1.User.findOne({ _id: req.body.author });
             const subject = 'A joke needs verification';
-            const message = ` ${author === null || author === void 0 ? void 0 : author.username}: ${joke.user}, ${joke._id}, ${joke.type}, ${joke.category}, ${joke.language}, ${joke.safe}, ${Object.entries(joke.flags)
+            const message = ` ${author === null || author === void 0 ? void 0 : author.username}: ${author === null || author === void 0 ? void 0 : author.name}: ${joke.user}, ${joke._id}, ${joke.type}, ${joke.category}, ${joke.language}, ${joke.safe}, ${Object.entries(joke.flags)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
                 .join(', ')}, ${joke.type === types_1.EJokeType.twopart && joke.setup ? joke.setup : ''}, ${joke.type === types_1.EJokeType.twopart && joke.delivery ? joke.delivery : ''}, ${joke.type === types_1.EJokeType.single && joke.joke ? joke.joke : ''}`;
@@ -353,10 +353,10 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             //   )
             const author = yield user_1.User.findOne({ _id: req.body.author });
             const subject = 'A joke needs verification';
-            const message = `${body.jokeId}, ${findJoke._id}, ${body.type}, ${body.category}, ${body.language}, ${body.safe}, ${Object.entries(body.flags)
+            const message = `${author === null || author === void 0 ? void 0 : author.username}: ${author === null || author === void 0 ? void 0 : author.name}: ${body.user}, ${body.jokeId}, ${findJoke._id}, ${body.type}, ${body.category}, ${body.language}, ${body.safe}, ${Object.entries(body.flags)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key)
-                .join(', ')}, ${author === null || author === void 0 ? void 0 : author.username}: ${body.user}, ${body.type === types_1.EJokeType.twopart && body.setup ? body.setup : ''}, ${body.type === types_1.EJokeType.twopart && body.delivery ? body.delivery : ''}, ${body.type === types_1.EJokeType.single && body.body ? body.body : ''}`;
+                .join(', ')}, ${body.type === types_1.EJokeType.twopart && body.setup ? body.setup : ''}, ${body.type === types_1.EJokeType.twopart && body.delivery ? body.delivery : ''}, ${body.type === types_1.EJokeType.single && body.body ? body.body : ''}`;
             const adminEmail = process.env.NODEMAILER_USER || '';
             const link = `${process.env.BASE_URI}/api/jokes/${findJoke._id}/verification`;
             const language = (_l = body.language) !== null && _l !== void 0 ? _l : 'en';
