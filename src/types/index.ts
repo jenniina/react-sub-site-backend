@@ -198,3 +198,12 @@ export enum EPleaseChooseAnotherName {
   cs = 'Vyberte prosím jiné jméno',
   fi = 'Pyydän valitsemaan toisen nimen',
 }
+export enum EThisNameIsNotAvailable {
+  en = 'This name is not available',
+  es = 'Este nombre no está disponible',
+  fr = 'Ce nom n est pas disponible',
+  de = 'Dieser Name ist nicht verfügbar',
+  pt = 'Este nome não está disponível',
+  cs = 'Toto jméno není k dispozici',
+  fi = 'Tämä nimimerkki on jo käytössä',
+}
