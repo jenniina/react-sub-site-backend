@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.comparePassword = exports.refreshExpiredToken = exports.requestNewToken = exports.findUserByUsername = exports.verifyToken = exports.verifyTokenMiddleware = exports.generateToken = exports.changeUsernameToken = exports.changeUsername = exports.resetUsernameToken = exports.resetUsername = exports.forgotUsername = exports.verifyUsernameToken = exports.verifyUsername = exports.changeEmailToken = exports.changeEmail = exports.verifyEmailToken = exports.verifyEmail = exports.changePasswordToken = exports.changePassword = exports.resetPasswordToken = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.registerUser = exports.loginUser = exports.deleteUser = exports.updateUser = exports.updateUsername = exports.confirmEmail = exports.addUser = exports.getUser = exports.getUsers = exports.authenticateUser = exports.checkIfAdmin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const types_1 = require("../../types");
 const user_1 = require("../../models/user");
 const quiz_1 = require("../../models/quiz");
 const todo_1 = require("../../models/todo");
@@ -291,6 +292,7 @@ var ESuccessfullyLoggedIn;
     ESuccessfullyLoggedIn["cs"] = "\u00DAsp\u011B\u0161n\u011B p\u0159ihl\u00E1\u0161en";
     ESuccessfullyLoggedIn["fi"] = "Kirjauduttu onnistuneesti";
 })(ESuccessfullyLoggedIn || (ESuccessfullyLoggedIn = {}));
+const InvalidOrExpiredToken = 'Invalid or expired token';
 const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
     if (!id)
         return undefined;
@@ -606,7 +608,7 @@ const confirmEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* (
       <body>
         <div>
           <h1>
-            ${EInvalidOrMissingToken[language] || 'Invalid or expired token'}
+            ${EInvalidOrMissingToken[language] || InvalidOrExpiredToken}
           </h1>
           <p>${ELogInAtTheAppOrRequestANewEmailConfirmToken[language || 'en']}</p> 
           <p>
@@ -1021,7 +1023,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         EMessage["cs"] = "U\u017Eivatel registrov\u00E1n. Pros\u00EDm, zkontrolujte sv\u016Fj email pro ov\u011B\u0159ovac\u00ED odkaz";
         EMessage["fi"] = "K\u00E4ytt\u00E4j\u00E4 rekister\u00F6ity. Tarkista s\u00E4hk\u00F6postisi vahvistuslinkki\u00E4 varten";
     })(EMessage || (EMessage = {}));
-    const { name, username, password, jokes, language } = req.body;
+    const { name, username, password, language } = req.body;
     const saltRounds = 10;
     let ERegistrationFailed;
     (function (ERegistrationFailed) {
@@ -1044,97 +1046,74 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         EPleaseCheckYourEmailIfYouHaveAlreadyRegistered["fi"] = "Tarkista s\u00E4hk\u00F6postisi, jos olet jo rekister\u00F6itynyt";
     })(EPleaseCheckYourEmailIfYouHaveAlreadyRegistered || (EPleaseCheckYourEmailIfYouHaveAlreadyRegistered = {}));
     try {
-        bcrypt_1.default
-            .hash(password, saltRounds)
-            .then((hashedPassword) => {
-            return user_1.User.findOne({ username })
-                .then((user) => __awaiter(void 0, void 0, void 0, function* () {
-                if (user) {
-                    res.status(401).json({
-                        message: `${ERegistrationFailed[user.language]}. ${EPleaseCheckYourEmailIfYouHaveAlreadyRegistered[user.language]}` ||
-                            'Registration failed, Please check your email if you have already registered',
-                    });
-                }
-                else {
-                    const newUser = new user_1.User({
-                        name,
-                        username,
-                        password: hashedPassword,
-                        jokes,
-                        language,
-                        verified: false,
-                    });
-                    // const secret = process.env.JWT_SECRET || 'jgtrshdjfshdf'
-                    // jwt.sign(
-                    //   { userId: newUser._id },
-                    //   secret,
-                    //   { expiresIn: '1d' },
-                    //   (err, token) => {
-                    //     if (err) {
-                    //       console.error(err)
-                    //       res.status(500).json({
-                    //         message:
-                    //           EErrorCreatingToken[newUser?.language] || 'Error creating token',
-                    //       })
-                    // } else {
-                    const token = yield generateToken(newUser._id);
-                    const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${language}`;
-                    newUser.token = token;
-                    (0, email_1.sendMail)(EHelloWelcome[language], EEmailMessage[language], username, language, link)
-                        .then((result) => {
-                        newUser.save().then((user) => {
-                            res.status(201).json({
-                                success: true,
-                                user: {
-                                    _id: user._id,
-                                    name: user.name,
-                                    username: user.username,
-                                    language: user.language,
-                                    role: user.role,
-                                    verified: user.verified,
-                                },
-                                message: EMessage[language] || 'User registered',
-                            });
-                        });
-                    })
-                        .catch((error) => {
-                        console.log(error);
-                        res.status(500).json({
-                            message: EErrorSendingMail[language] || 'Error sending mail',
-                        });
-                    });
-                    // }
-                }
-                // )
-                // }
-            }))
-                .catch((error) => {
-                console.error(error);
-                res.status(500).json({
-                    success: false,
-                    message: EError[language || 'en'] || 'An error occurred',
-                });
+        const hashedPassword = yield bcrypt_1.default.hash(password, saltRounds);
+        const existingUser = yield user_1.User.findOne({ username });
+        if (existingUser) {
+            res.status(401).json({
+                message: `${ERegistrationFailed[existingUser.language]}. ${EPleaseCheckYourEmailIfYouHaveAlreadyRegistered[existingUser.language]}` ||
+                    'Registration failed, Please check your email if you have already registered',
             });
-        })
-            .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
+            return;
+        }
+        // Check if name already exists
+        const existingName = yield user_1.User.findOne({ name });
+        if (existingName) {
+            res.status(400).json({
+                success: false,
+                message: types_1.EPleaseChooseAnotherName[existingName.language] || 'Please choose another name',
+            });
+            return;
+        }
+        const newUser = new user_1.User({
+            name,
+            username,
+            password: hashedPassword,
+            language,
+            verified: false,
+            role: 1,
+        });
+        const token = yield generateToken(newUser._id);
+        const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${language}`;
+        newUser.token = token;
+        const savedUser = yield newUser.save().catch((error) => {
             console.error(error);
-            if (error.message === 'Token expired') {
-                const user = yield user_1.User.findOne({ username });
-                const refresh = yield refreshExpiredToken(req, user === null || user === void 0 ? void 0 : user._id);
-                res.status(401).json({ success: false, message: refresh === null || refresh === void 0 ? void 0 : refresh.message });
-            }
-            else {
-                const language = req.body.language || 'en';
-                res.status(500).json({
-                    success: false,
-                    message: EError[language] || 'An error occurred *',
-                });
-            }
-        }));
+            res.status(500).json({
+                success: false,
+                message: EError[language || 'en'] || 'Error ¤',
+                error,
+            });
+        });
+        const sentEmail = yield (0, email_1.sendMail)(EHelloWelcome[language], EEmailMessage[language], username, language, link);
+        if (savedUser && sentEmail) {
+            res.status(201).json({
+                success: true,
+                user: {
+                    _id: savedUser._id,
+                    name: savedUser.name,
+                    username: savedUser.username,
+                    language: savedUser.language,
+                    role: savedUser.role,
+                    verified: savedUser.verified,
+                },
+                message: EMessage[language] || 'User registered',
+            });
+        }
+        else if (savedUser && !sentEmail) {
+            res.status(500).json({
+                success: false,
+                message: EErrorSendingMail[language] || 'Error sending mail',
+            });
+        }
+        else {
+            res.status(500).json({
+                success: false,
+                message: EError[language || 'en'] || 'Error ¤',
+            });
+        }
     }
     catch (error) {
         console.error('Error:', error);
-        if (error.message === 'Token expired') {
+        if (error.message === InvalidOrExpiredToken) {
             const user = yield user_1.User.findOne({ username });
             const refresh = yield refreshExpiredToken(req, user === null || user === void 0 ? void 0 : user._id);
             if (refresh === null || refresh === void 0 ? void 0 : refresh.success) {
@@ -1853,7 +1832,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
       <body>
       <div>
         <h1>
-          ${EInvalidOrMissingToken[language] || 'Invalid or expired token'}
+          ${EInvalidOrMissingToken[language] || InvalidOrExpiredToken}
         </h1>
         <p>${ELogInAtTheAppOrRequestANewPasswordResetToken[language] ||
                 'Check the app to request a new password reset token. '}</p> 
@@ -1999,7 +1978,7 @@ const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
         // Validate the token
         const user = yield user_1.User.findOne({ resetToken: token });
         if (!user) {
-            res.status(400).json({ message: 'Invalid or expired token' });
+            res.status(400).json({ message: InvalidOrExpiredToken });
         }
         else if (user) {
             // Check if newPassword and confirmPassword match

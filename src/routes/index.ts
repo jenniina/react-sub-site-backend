@@ -135,7 +135,7 @@ router.delete('/api/todo/:user/:key', deleteTodo)
 router.put('/api/todo/:user/:key', editTodo)
 router.delete('/api/todo/:user', clearCompletedTodos)
 
-router.get('/api/', (req, res) => {
+router.get('/', (req, res) => {
   res.send('Nothing to see here')
 })
 

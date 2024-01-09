@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
+exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
 var ECategory;
 (function (ECategory) {
     ECategory["all"] = "All";
@@ -96,3 +96,13 @@ var EUserDeletedFromJoke;
     EUserDeletedFromJoke["cs"] = "U\u017Eivatel smaz\u00E1n z vtipu";
     EUserDeletedFromJoke["fi"] = "K\u00E4ytt\u00E4j\u00E4 poistettu vitsist\u00E4";
 })(EUserDeletedFromJoke || (exports.EUserDeletedFromJoke = EUserDeletedFromJoke = {}));
+var EPleaseChooseAnotherName;
+(function (EPleaseChooseAnotherName) {
+    EPleaseChooseAnotherName["en"] = "Please choose another name";
+    EPleaseChooseAnotherName["es"] = "Por favor elija otro nombre";
+    EPleaseChooseAnotherName["fr"] = "Veuillez choisir un autre nom";
+    EPleaseChooseAnotherName["de"] = "Bitte w\u00E4hlen Sie einen anderen Namen";
+    EPleaseChooseAnotherName["pt"] = "Por favor, escolha outro nome";
+    EPleaseChooseAnotherName["cs"] = "Vyberte pros\u00EDm jin\u00E9 jm\u00E9no";
+    EPleaseChooseAnotherName["fi"] = "Pyyd\u00E4n valitsemaan toisen nimen";
+})(EPleaseChooseAnotherName || (exports.EPleaseChooseAnotherName = EPleaseChooseAnotherName = {}));

@@ -189,3 +189,12 @@ export enum EUserDeletedFromJoke {
   cs = 'Uživatel smazán z vtipu',
   fi = 'Käyttäjä poistettu vitsistä',
 }
+export enum EPleaseChooseAnotherName {
+  en = 'Please choose another name',
+  es = 'Por favor elija otro nombre',
+  fr = 'Veuillez choisir un autre nom',
+  de = 'Bitte wählen Sie einen anderen Namen',
+  pt = 'Por favor, escolha outro nome',
+  cs = 'Vyberte prosím jiné jméno',
+  fi = 'Pyydän valitsemaan toisen nimen',
+}
