@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
+exports.EThisNameIsNotAvailable = exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
 var ECategory;
 (function (ECategory) {
     ECategory["all"] = "All";
@@ -106,3 +106,13 @@ var EPleaseChooseAnotherName;
     EPleaseChooseAnotherName["cs"] = "Vyberte pros\u00EDm jin\u00E9 jm\u00E9no";
     EPleaseChooseAnotherName["fi"] = "Pyyd\u00E4n valitsemaan toisen nimen";
 })(EPleaseChooseAnotherName || (exports.EPleaseChooseAnotherName = EPleaseChooseAnotherName = {}));
+var EThisNameIsNotAvailable;
+(function (EThisNameIsNotAvailable) {
+    EThisNameIsNotAvailable["en"] = "This name is not available";
+    EThisNameIsNotAvailable["es"] = "Este nombre no est\u00E1 disponible";
+    EThisNameIsNotAvailable["fr"] = "Ce nom n est pas disponible";
+    EThisNameIsNotAvailable["de"] = "Dieser Name ist nicht verf\u00FCgbar";
+    EThisNameIsNotAvailable["pt"] = "Este nome n\u00E3o est\u00E1 dispon\u00EDvel";
+    EThisNameIsNotAvailable["cs"] = "Toto jm\u00E9no nen\u00ED k dispozici";
+    EThisNameIsNotAvailable["fi"] = "T\u00E4m\u00E4 nimimerkki on jo k\u00E4yt\u00F6ss\u00E4";
+})(EThisNameIsNotAvailable || (exports.EThisNameIsNotAvailable = EThisNameIsNotAvailable = {}));

@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
-import { EPleaseChooseAnotherName, IUser } from '../../types'
+import { EPleaseChooseAnotherName, EThisNameIsNotAvailable, IUser } from '../../types'
 import { User } from '../../models/user'
 import { Quiz } from '../../models/quiz'
 import { Todo } from '../../models/todo'
@@ -658,34 +658,51 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
       body,
     } = req
 
-    const { password, _id } = body
+    const { password, _id, name } = body
+
     const user = await User.findById(_id)
-    if (user && password) {
-      const salt = await bcrypt.genSalt(10)
-      const hashedPassword = await bcrypt.hash(password, salt)
-      user.password = hashedPassword
-      user.markModified('password')
-      user.name = body.name ?? user.name
-      user.markModified('name')
-      user.set('language', body.language)
-      const updatedUser = await user.save()
-      res.status(200).json({
-        success: true,
-        message: `${
-          EUserUpdated[(updatedUser?.language as unknown as ELanguage) || 'en']
-        }!`,
-        user: {
-          _id: updatedUser._id,
-          name: updatedUser.name,
-          username: updatedUser.username,
-          language: updatedUser.language,
-          role: updatedUser.role,
-          verified: updatedUser.verified,
-        },
-      })
-    } else if (user && !password) {
-      user.name = body.name ?? user.name
-      user.markModified('name')
+
+    if (user) {
+      if (name) {
+        const existingName = await User.findOne({ name })
+        if (existingName && String(existingName._id) !== String(user._id)) {
+          res.status(400).json({
+            success: false,
+            message:
+              EThisNameIsNotAvailable[req.body.language as ELanguage] ||
+              'This name is not available',
+          })
+          return
+        }
+        user.name = name
+        user.markModified('name')
+      }
+      if (password) {
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (isMatch) {
+          const salt = await bcrypt.genSalt(10)
+          const hashedPassword = await bcrypt.hash(password, salt)
+          user.password = hashedPassword
+          user.markModified('password')
+        }
+        user.set('language', body.language)
+        const updatedUser = await user.save()
+        res.status(200).json({
+          success: true,
+          message: `${
+            EUserUpdated[(updatedUser?.language as unknown as ELanguage) || 'en']
+          }!`,
+          user: {
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            username: updatedUser.username,
+            language: updatedUser.language,
+            role: updatedUser.role,
+            verified: updatedUser.verified,
+          },
+        })
+        return
+      }
       user.set('language', body.language ?? 'en')
       const updatedUser: IUser = await user.save()
       res.status(200).json({
@@ -702,10 +719,11 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
           verified: updatedUser.verified,
         },
       })
+      return
     } else {
       res.status(404).json({
         success: false,
-        message: 'User not found',
+        message: EError[(req.body.language as ELanguage) || 'en'],
       })
     }
   } catch (error) {
@@ -713,6 +731,7 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({
       success: false,
       message: `${EError[(req.body.language as ELanguage) || 'en']} ¤`,
+      error,
     })
   }
 }
