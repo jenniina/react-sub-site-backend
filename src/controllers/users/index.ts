@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
-import { IUser } from '../../types'
+import { EPleaseChooseAnotherName, IUser } from '../../types'
 import { User } from '../../models/user'
 import { Quiz } from '../../models/quiz'
 import { Todo } from '../../models/todo'
@@ -260,6 +260,7 @@ enum ESuccessfullyLoggedIn {
   cs = 'Úspěšně přihlášen',
   fi = 'Kirjauduttu onnistuneesti',
 }
+const InvalidOrExpiredToken = 'Invalid or expired token'
 
 const generateToken = async (id: string | undefined): Promise<string | undefined> => {
   if (!id) return undefined
@@ -570,7 +571,7 @@ const confirmEmail = async (req: Request, res: Response): Promise<void> => {
       <body>
         <div>
           <h1>
-            ${EInvalidOrMissingToken[language as ELanguage] || 'Invalid or expired token'}
+            ${EInvalidOrMissingToken[language as ELanguage] || InvalidOrExpiredToken}
           </h1>
           <p>${
             ELogInAtTheAppOrRequestANewEmailConfirmToken[(language as ELanguage) || 'en']
@@ -996,7 +997,7 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
     fi = 'Käyttäjä rekisteröity. Tarkista sähköpostisi vahvistuslinkkiä varten',
   }
 
-  const { name, username, password, jokes, language } = req.body
+  const { name, username, password, language } = req.body
   const saltRounds = 10
 
   enum ERegistrationFailed {
@@ -1018,106 +1019,88 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
     fi = 'Tarkista sähköpostisi, jos olet jo rekisteröitynyt',
   }
   try {
-    bcrypt
-      .hash(password, saltRounds)
-      .then((hashedPassword) => {
-        return User.findOne({ username })
-          .then(async (user) => {
-            if (user) {
-              res.status(401).json({
-                message:
-                  `${ERegistrationFailed[user.language]}. ${
-                    EPleaseCheckYourEmailIfYouHaveAlreadyRegistered[user.language]
-                  }` ||
-                  'Registration failed, Please check your email if you have already registered',
-              })
-            } else {
-              const newUser = new User({
-                name,
-                username,
-                password: hashedPassword,
-                jokes,
-                language,
-                verified: false,
-              })
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-              // const secret = process.env.JWT_SECRET || 'jgtrshdjfshdf'
-              // jwt.sign(
-              //   { userId: newUser._id },
-              //   secret,
-              //   { expiresIn: '1d' },
-              //   (err, token) => {
-              //     if (err) {
-              //       console.error(err)
-              //       res.status(500).json({
-              //         message:
-              //           EErrorCreatingToken[newUser?.language] || 'Error creating token',
-              //       })
-              // } else {
-              const token = await generateToken(newUser._id)
-              const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${language}`
-              newUser.token = token
+    const existingUser = await User.findOne({ username })
+    if (existingUser) {
+      res.status(401).json({
+        message:
+          `${ERegistrationFailed[existingUser.language]}. ${
+            EPleaseCheckYourEmailIfYouHaveAlreadyRegistered[existingUser.language]
+          }` ||
+          'Registration failed, Please check your email if you have already registered',
+      })
+      return
+    }
 
-              sendMail(
-                EHelloWelcome[language as ELanguage],
-                EEmailMessage[language as ELanguage],
-                username,
-                language,
-                link
-              )
-                .then((result) => {
-                  newUser.save().then((user: IUser) => {
-                    res.status(201).json({
-                      success: true,
-                      user: {
-                        _id: user._id,
-                        name: user.name,
-                        username: user.username,
-                        language: user.language,
-                        role: user.role,
-                        verified: user.verified,
-                      },
-                      message: EMessage[language as ELanguage] || 'User registered',
-                    })
-                  })
-                })
-                .catch((error) => {
-                  console.log(error)
-                  res.status(500).json({
-                    message:
-                      EErrorSendingMail[language as ELanguage] || 'Error sending mail',
-                  })
-                })
-              // }
-            }
-            // )
-            // }
-          })
-          .catch((error) => {
-            console.error(error)
-            res.status(500).json({
-              success: false,
-              message: EError[(language as ELanguage) || 'en'] || 'An error occurred',
-            })
-          })
+    // Check if name already exists
+    const existingName = await User.findOne({ name })
+    if (existingName) {
+      res.status(400).json({
+        success: false,
+        message:
+          EPleaseChooseAnotherName[existingName.language] || 'Please choose another name',
       })
-      .catch(async (error) => {
-        console.error(error)
-        if (error.message === 'Token expired') {
-          const user = await User.findOne({ username })
-          const refresh = await refreshExpiredToken(req, user?._id)
-          res.status(401).json({ success: false, message: refresh?.message })
-        } else {
-          const language = req.body.language || 'en'
-          res.status(500).json({
-            success: false,
-            message: EError[language as ELanguage] || 'An error occurred *',
-          })
-        }
+      return
+    }
+
+    const newUser = new User({
+      name,
+      username,
+      password: hashedPassword,
+      language,
+      verified: false,
+      role: 1,
+    })
+
+    const token = await generateToken(newUser._id)
+    const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${language}`
+    newUser.token = token
+
+    const savedUser = await newUser.save().catch((error) => {
+      console.error(error)
+      res.status(500).json({
+        success: false,
+        message: EError[(language as ELanguage) || 'en'] || 'Error ¤',
+        error,
       })
+    })
+
+    const sentEmail = await sendMail(
+      EHelloWelcome[language as ELanguage],
+      EEmailMessage[language as ELanguage],
+      username,
+      language,
+      link
+    )
+
+    if (savedUser && sentEmail) {
+      res.status(201).json({
+        success: true,
+        user: {
+          _id: savedUser._id,
+          name: savedUser.name,
+          username: savedUser.username,
+          language: savedUser.language,
+          role: savedUser.role,
+          verified: savedUser.verified,
+        },
+        message: EMessage[language as ELanguage] || 'User registered',
+      })
+    } else if (savedUser && !sentEmail) {
+      res.status(500).json({
+        success: false,
+        message: EErrorSendingMail[language as ELanguage] || 'Error sending mail',
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        message: EError[(language as ELanguage) || 'en'] || 'Error ¤',
+      })
+    }
   } catch (error) {
     console.error('Error:', error)
-    if ((error as Error).message === 'Token expired') {
+    if ((error as Error).message === InvalidOrExpiredToken) {
       const user = await User.findOne({ username })
       const refresh = await refreshExpiredToken(req, user?._id)
       if (refresh?.success) {
@@ -1927,7 +1910,7 @@ const resetPassword = async (req: Request, res: Response): Promise<void> => {
       <body>
       <div>
         <h1>
-          ${EInvalidOrMissingToken[language as ELanguage] || 'Invalid or expired token'}
+          ${EInvalidOrMissingToken[language as ELanguage] || InvalidOrExpiredToken}
         </h1>
         <p>${
           ELogInAtTheAppOrRequestANewPasswordResetToken[language as ELanguage] ||
@@ -2080,7 +2063,7 @@ const resetPasswordToken = async (req: Request, res: Response): Promise<void> =>
     // Validate the token
     const user = await User.findOne({ resetToken: token })
     if (!user) {
-      res.status(400).json({ message: 'Invalid or expired token' })
+      res.status(400).json({ message: InvalidOrExpiredToken })
     } else if (user) {
       // Check if newPassword and confirmPassword match
       if (newPassword !== confirmPassword) {
