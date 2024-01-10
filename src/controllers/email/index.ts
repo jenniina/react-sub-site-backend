@@ -64,7 +64,7 @@ export const sendMail = (
         from: process.env.NODEMAILER_USER,
         to: username,
         subject: subject,
-        text: message + ': ' + link || link,
+        text: message ? `${message}: ${link}` : link,
       },
       (error: Error, info: { response: unknown }) => {
         if (error) {
