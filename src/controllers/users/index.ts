@@ -930,7 +930,7 @@ const forgotPassword = async (req: Request, res: Response): Promise<void> => {
       const link = `${process.env.BASE_URI}/api/users/reset/${token}?lang=${language}`
       //User.findOneAndUpdate({ username }, { $set: { resetToken: token } })
       await User.findOneAndUpdate({ username }, { resetToken: token })
-      sendMail(
+      await sendMail(
         EPasswordReset[language as unknown as ELanguage],
         EResetPassword[language as unknown as ELanguage],
         username,
@@ -1208,7 +1208,7 @@ const refreshExpiredToken = async (
               token = await generateToken(_id)
               if (!user?.verified) {
                 const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${body.language}`
-                sendMail(
+                await sendMail(
                   EHelloWelcome[body.language as keyof typeof EHelloWelcome],
                   EEmailMessage[body.language as keyof typeof EEmailMessage],
                   body.username,
@@ -1268,7 +1268,7 @@ const refreshExpiredToken = async (
 
         // Save the new token to the user
         getUserById_(decoded?.userId)
-          .then((user) => {
+          .then(async (user) => {
             if (!user) {
               reject(
                 new Error(
@@ -1295,19 +1295,18 @@ const refreshExpiredToken = async (
               //       })
               //     } else {
               user.token = token
+              user.markModified('token')
 
               const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${req.body.language}`
-              user
-                .save()
-                .then(() => {
-                  sendMail(
-                    EHelloWelcome[body.language as keyof typeof EHelloWelcome],
-                    EEmailMessage[body.language as keyof typeof EHelloWelcome],
-                    user.username,
-                    body.language as unknown as ELanguage,
-                    link
-                  )
-                })
+              await user.save()
+
+              await sendMail(
+                EHelloWelcome[body.language as keyof typeof EHelloWelcome],
+                EEmailMessage[body.language as keyof typeof EHelloWelcome],
+                user.username,
+                body.language as unknown as ELanguage,
+                link
+              )
                 .then((r) => {
                   resolve({
                     success: true,

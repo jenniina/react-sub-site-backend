@@ -960,7 +960,7 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const link = `${process.env.BASE_URI}/api/users/reset/${token}?lang=${language}`;
             //User.findOneAndUpdate({ username }, { $set: { resetToken: token } })
             yield user_1.User.findOneAndUpdate({ username }, { resetToken: token });
-            (0, email_1.sendMail)(EPasswordReset[language], EResetPassword[language], username, language, link)
+            yield (0, email_1.sendMail)(EPasswordReset[language], EResetPassword[language], username, language, link)
                 .then((result) => {
                 console.log('result ', result);
                 res.status(200).json({
@@ -1191,7 +1191,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                         token = yield generateToken(_id);
                         if (!(user === null || user === void 0 ? void 0 : user.verified)) {
                             const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${body.language}`;
-                            (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], body.username, body.language, link)
+                            yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], body.username, body.language, link)
                                 .then((r) => {
                                 reject({
                                     success: false,
@@ -1237,7 +1237,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                 //resolve({ success: true, message: 'Token refreshed successfully', newToken })
                 // Save the new token to the user
                 getUserById_(decoded === null || decoded === void 0 ? void 0 : decoded.userId)
-                    .then((user) => {
+                    .then((user) => __awaiter(void 0, void 0, void 0, function* () {
                     if (!user) {
                         reject(new Error(`${EErrorCreatingToken[body.language]} *`));
                         return;
@@ -1259,12 +1259,10 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                         //       })
                         //     } else {
                         user.token = token;
+                        user.markModified('token');
                         const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${req.body.language}`;
-                        user
-                            .save()
-                            .then(() => {
-                            (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], user.username, body.language, link);
-                        })
+                        yield user.save();
+                        yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], user.username, body.language, link)
                             .then((r) => {
                             resolve({
                                 success: true,
@@ -1291,7 +1289,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                     // }
                     // )
                     // }
-                })
+                }))
                     .catch((error) => {
                     console.error(error);
                     reject({
