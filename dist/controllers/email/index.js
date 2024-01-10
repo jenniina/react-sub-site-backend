@@ -48,7 +48,7 @@ const sendMail = (subject, message, username, language, link) => {
             from: process.env.NODEMAILER_USER,
             to: username,
             subject: subject,
-            text: message + ': ' + link || link,
+            text: message ? `${message}: ${link}` : link,
         }, (error, info) => {
             if (error) {
                 console.log(error);
