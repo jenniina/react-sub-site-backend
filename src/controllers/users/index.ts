@@ -1588,14 +1588,12 @@ const requestNewToken = async (req: Request, res: Response): Promise<void> => {
 const verifyEmailToken = async (req: Request, res: Response): Promise<void> => {
   try {
     const token = req.params.token
-    const user = await User.findOne({ token: token })
+    const user = await User.findOneAndUpdate(
+      { token },
+      { $set: { verified: true, token: undefined } }
+    )
 
     if (user) {
-      // Mark the user as verified and remove the verification token
-      user.verified = true
-      user.token = undefined
-      await user.save()
-
       //res.redirect('/api/users/verification-success')
 
       enum EVerificationSuccessful {
@@ -2264,114 +2262,6 @@ const resetPasswordToken = async (req: Request, res: Response): Promise<void> =>
   }
 }
 
-const changePassword = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Password changed' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const changePasswordToken = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Password changed with token' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Email verified' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const changeEmail = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Email changed' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const changeEmailToken = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Email changed with token' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const verifyUsername = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username verified' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const verifyUsernameToken = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username verified with token' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const forgotUsername = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username forgot' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const resetUsername = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username reset' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const resetUsernameToken = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username reset with token' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const changeUsername = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username changed' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
-const changeUsernameToken = async (req: Request, res: Response): Promise<void> => {
-  try {
-    res.status(200).json({ message: 'Username changed with token' })
-  } catch (error) {
-    console.error('Error:', error)
-    res.status(500).json({ message: EError[(req.body.language as ELanguage) || 'en'] })
-  }
-}
-
 const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
@@ -2413,19 +2303,7 @@ export {
   forgotPassword,
   resetPassword,
   resetPasswordToken,
-  changePassword,
-  changePasswordToken,
-  verifyEmail,
   verifyEmailToken,
-  changeEmail,
-  changeEmailToken,
-  verifyUsername,
-  verifyUsernameToken,
-  forgotUsername,
-  resetUsername,
-  resetUsernameToken,
-  changeUsername,
-  changeUsernameToken,
   generateToken,
   verifyTokenMiddleware,
   verifyToken,

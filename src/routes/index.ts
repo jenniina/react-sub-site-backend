@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, Response, Request, NextFunction } from 'express'
 //import { body } from 'express-validator'
 import {
   getQuizzes,
@@ -27,19 +27,7 @@ import {
   forgotPassword,
   resetPassword,
   resetPasswordToken,
-  changePassword,
-  changePasswordToken,
-  verifyEmail,
   verifyEmailToken,
-  changeEmail,
-  changeEmailToken,
-  verifyUsername,
-  verifyUsernameToken,
-  forgotUsername,
-  resetUsername,
-  resetUsernameToken,
-  changeUsername,
-  changeUsernameToken,
   verifyToken,
   generateToken,
   verifyTokenMiddleware,
@@ -88,18 +76,6 @@ router.get('/api/users/verify/:token', verifyEmailToken)
 router.get('/api/users/logout', logoutUser)
 //router.get('/api/users/verify/:token', [verifyTokenMiddleware, verifyEmailToken])
 router.post('/api/users/:id', generateToken)
-router.post('/api/users/change', changePassword)
-router.post('/api/users/change/:token', changePasswordToken)
-router.post('/api/users/verify', verifyEmail)
-router.post('/api/users/change', changeEmail)
-router.post('/api/users/change/:token', changeEmailToken)
-router.post('/api/users/verify', verifyUsername)
-router.get('/api/users/verify/:token', verifyUsernameToken)
-//router.post('/api/users/forgot', forgotUsername)
-router.get('/api/users/reset/:token', resetUsername)
-router.post('/api/users/reset/:token', resetUsernameToken)
-router.post('/api/users/change', changeUsername)
-router.post('/api/users/change/:token', changeUsernameToken)
 router.get('/api/users/username/:username', findUserByUsername)
 // router.post('/api/users/:id/delete', deleteAllJokesByUserId)
 
@@ -139,7 +115,7 @@ router.get('/', (req, res) => {
   res.send('Nothing to see here')
 })
 
-const { body } = require('express-validator')
+const { body, validationResult } = require('express-validator')
 const { sendEmailForm, sendEmailSelect } = require('../controllers/email')
 
 router.post(
@@ -156,6 +132,17 @@ router.post(
     body('select').trim().escape(),
     body('selectmulti').trim().escape(),
   ],
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: errors.array().join('\n'),
+        errors: errors.array(),
+      })
+    }
+    next()
+  },
   sendEmailForm
 )
 
@@ -165,7 +152,19 @@ router.post(
     body('issues').trim().escape(),
     body('favoriteHero').trim().escape(),
     body('clarification').trim().escape(),
+    body('email').isEmail(),
   ],
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: errors.array().join('\n'),
+        errors: errors.array(),
+      })
+    }
+    next()
+  },
   sendEmailSelect
 )
 

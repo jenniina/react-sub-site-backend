@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.comparePassword = exports.refreshExpiredToken = exports.requestNewToken = exports.findUserByUsername = exports.verifyToken = exports.verifyTokenMiddleware = exports.generateToken = exports.changeUsernameToken = exports.changeUsername = exports.resetUsernameToken = exports.resetUsername = exports.forgotUsername = exports.verifyUsernameToken = exports.verifyUsername = exports.changeEmailToken = exports.changeEmail = exports.verifyEmailToken = exports.verifyEmail = exports.changePasswordToken = exports.changePassword = exports.resetPasswordToken = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.registerUser = exports.loginUser = exports.deleteUser = exports.updateUser = exports.updateUsername = exports.confirmEmail = exports.addUser = exports.getUser = exports.getUsers = exports.authenticateUser = exports.checkIfAdmin = void 0;
+exports.comparePassword = exports.refreshExpiredToken = exports.requestNewToken = exports.findUserByUsername = exports.verifyToken = exports.verifyTokenMiddleware = exports.generateToken = exports.verifyEmailToken = exports.resetPasswordToken = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.registerUser = exports.loginUser = exports.deleteUser = exports.updateUser = exports.updateUsername = exports.confirmEmail = exports.addUser = exports.getUser = exports.getUsers = exports.authenticateUser = exports.checkIfAdmin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const types_1 = require("../../types");
 const user_1 = require("../../models/user");
@@ -1521,12 +1521,8 @@ const verifyEmailToken = (req, res) => __awaiter(void 0, void 0, void 0, functio
     var _f, _g, _h, _j;
     try {
         const token = req.params.token;
-        const user = yield user_1.User.findOne({ token: token });
+        const user = yield user_1.User.findOneAndUpdate({ token }, { $set: { verified: true, token: undefined } });
         if (user) {
-            // Mark the user as verified and remove the verification token
-            user.verified = true;
-            user.token = undefined;
-            yield user.save();
             //res.redirect('/api/users/verification-success')
             let EVerificationSuccessful;
             (function (EVerificationSuccessful) {
@@ -2161,126 +2157,6 @@ const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.resetPasswordToken = resetPasswordToken;
-const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Password changed' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changePassword = changePassword;
-const changePasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Password changed with token' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changePasswordToken = changePasswordToken;
-const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Email verified' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.verifyEmail = verifyEmail;
-const changeEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Email changed' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changeEmail = changeEmail;
-const changeEmailToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Email changed with token' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changeEmailToken = changeEmailToken;
-const verifyUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username verified' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.verifyUsername = verifyUsername;
-const verifyUsernameToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username verified with token' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.verifyUsernameToken = verifyUsernameToken;
-const forgotUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username forgot' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.forgotUsername = forgotUsername;
-const resetUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username reset' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.resetUsername = resetUsername;
-const resetUsernameToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username reset with token' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.resetUsernameToken = resetUsernameToken;
-const changeUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username changed' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changeUsername = changeUsername;
-const changeUsernameToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.status(200).json({ message: 'Username changed with token' });
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: EError[req.body.language || 'en'] });
-    }
-});
-exports.changeUsernameToken = changeUsernameToken;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _w, _x;
     try {
