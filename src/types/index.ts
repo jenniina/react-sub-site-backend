@@ -214,3 +214,12 @@ export enum EThisNameIsNotAvailable {
   cs = 'Toto jméno není k dispozici',
   fi = 'Tämä nimimerkki on jo käytössä',
 }
+export enum EJokeHidden {
+  en = 'Joke hidden',
+  es = 'Broma oculta',
+  fr = 'Blague cachée',
+  de = 'Witz versteckt',
+  pt = 'Piada escondida',
+  cs = 'Vtip skryt',
+  fi = 'Vitsi piilotettu',
+}

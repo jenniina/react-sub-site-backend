@@ -40,6 +40,7 @@ import {
   comparePassword,
   updateUsername,
   confirmEmail,
+  addToBlacklistedJokes,
 } from '../controllers/users'
 import {
   getJokes,
@@ -78,6 +79,7 @@ router.get('/api/users/logout', logoutUser)
 router.post('/api/users/:id', generateToken)
 router.get('/api/users/username/:username', findUserByUsername)
 // router.post('/api/users/:id/delete', deleteAllJokesByUserId)
+router.put('/api/users/:id/:jokeId/:language', addToBlacklistedJokes)
 
 // router.get('/api/users/:username/jokes', getJokesByUsername)
 router.get('/api/users/:id/categories/:category/jokes', getJokesByUserAndCategory)
