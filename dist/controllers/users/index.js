@@ -2180,7 +2180,7 @@ const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, fu
     var _y;
     try {
         const { id, jokeId, language } = req.params;
-        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $push: { blacklistedJokes: jokeId } }, { new: true });
+        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $push: { blacklistedJokes: { jokeId, language } } }, { new: true });
         if (user) {
             res.status(200).json({
                 success: true,

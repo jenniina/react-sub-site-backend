@@ -2294,7 +2294,7 @@ const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void>
     const { id, jokeId, language } = req.params
     const user = await User.findOneAndUpdate(
       { _id: id },
-      { $push: { blacklistedJokes: jokeId } },
+      { $push: { blacklistedJokes: { jokeId, language } } },
       { new: true }
     )
     if (user) {
