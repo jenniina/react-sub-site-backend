@@ -2185,6 +2185,7 @@ const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, fu
             res.status(200).json({
                 success: true,
                 message: types_1.EJokeHidden[language || 'en'],
+                user,
             });
         }
         else {

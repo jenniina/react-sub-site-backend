@@ -2301,6 +2301,7 @@ const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void>
       res.status(200).json({
         success: true,
         message: EJokeHidden[(language as unknown as ELanguage) || 'en'],
+        user,
       })
     } else {
       res.status(404).json({
