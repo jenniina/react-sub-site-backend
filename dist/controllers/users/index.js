@@ -2176,7 +2176,6 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.deleteUser = deleteUser;
-//router.put('/api/users/:id/:jokeId/:language', addToBlacklistedJokes)
 const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _y;
     try {

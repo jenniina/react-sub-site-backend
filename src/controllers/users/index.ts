@@ -2288,7 +2288,7 @@ const deleteUser = async (req: Request, res: Response): Promise<void> => {
     })
   }
 }
-//router.put('/api/users/:id/:jokeId/:language', addToBlacklistedJokes)
+
 const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id, jokeId, language } = req.params
