@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EThisNameIsNotAvailable = exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
+exports.EJokeHidden = exports.EThisNameIsNotAvailable = exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
 var ECategory;
 (function (ECategory) {
     ECategory["all"] = "All";
@@ -116,3 +116,13 @@ var EThisNameIsNotAvailable;
     EThisNameIsNotAvailable["cs"] = "Toto jm\u00E9no nen\u00ED k dispozici";
     EThisNameIsNotAvailable["fi"] = "T\u00E4m\u00E4 nimimerkki on jo k\u00E4yt\u00F6ss\u00E4";
 })(EThisNameIsNotAvailable || (exports.EThisNameIsNotAvailable = EThisNameIsNotAvailable = {}));
+var EJokeHidden;
+(function (EJokeHidden) {
+    EJokeHidden["en"] = "Joke hidden";
+    EJokeHidden["es"] = "Broma oculta";
+    EJokeHidden["fr"] = "Blague cach\u00E9e";
+    EJokeHidden["de"] = "Witz versteckt";
+    EJokeHidden["pt"] = "Piada escondida";
+    EJokeHidden["cs"] = "Vtip skryt";
+    EJokeHidden["fi"] = "Vitsi piilotettu";
+})(EJokeHidden || (exports.EJokeHidden = EJokeHidden = {}));

@@ -26,6 +26,7 @@ router.get('/api/users/logout', users_1.logoutUser);
 router.post('/api/users/:id', users_1.generateToken);
 router.get('/api/users/username/:username', users_1.findUserByUsername);
 // router.post('/api/users/:id/delete', deleteAllJokesByUserId)
+router.put('/api/users/:id/:jokeId/:language', users_1.addToBlacklistedJokes);
 // router.get('/api/users/:username/jokes', getJokesByUsername)
 router.get('/api/users/:id/categories/:category/jokes', jokes_1.getJokesByUserAndCategory);
 router.get('/api/users/:id/joketypes/:type/jokes', jokes_1.getJokesByUserAndType);

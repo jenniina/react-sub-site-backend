@@ -1,6 +1,11 @@
 import { Response, Request, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
-import { EPleaseChooseAnotherName, EThisNameIsNotAvailable, IUser } from '../../types'
+import {
+  EJokeHidden,
+  EPleaseChooseAnotherName,
+  EThisNameIsNotAvailable,
+  IUser,
+} from '../../types'
 import { User } from '../../models/user'
 import { Quiz } from '../../models/quiz'
 import { Todo } from '../../models/todo'
@@ -2283,6 +2288,35 @@ const deleteUser = async (req: Request, res: Response): Promise<void> => {
     })
   }
 }
+//router.put('/api/users/:id/:jokeId/:language', addToBlacklistedJokes)
+const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id, jokeId, language } = req.params
+    const user = await User.findOneAndUpdate(
+      { _id: id },
+      { $push: { blacklistedJokes: jokeId } },
+      { new: true }
+    )
+    if (user) {
+      res.status(200).json({
+        success: true,
+        message: EJokeHidden[(language as unknown as ELanguage) || 'en'],
+      })
+    } else {
+      res.status(404).json({
+        success: false,
+        message: EError[(language as unknown as ELanguage) || 'en'],
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      message: EError[(req.body?.language as ELanguage) || 'en'],
+    })
+  }
+}
+
 export {
   // verificationSuccess,
   checkIfAdmin,
@@ -2308,4 +2342,5 @@ export {
   requestNewToken,
   refreshExpiredToken,
   comparePassword,
+  addToBlacklistedJokes,
 }
