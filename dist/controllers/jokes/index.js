@@ -191,7 +191,7 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const link = `${process.env.BASE_URI}/api/jokes/${joke._id}/verification`;
             const language = (_j = joke.language) !== null && _j !== void 0 ? _j : 'en';
             try {
-                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, language, link);
+                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, link);
                 console.log(email_1.EEmailSent[joke.language], mailResponse);
                 res.status(201).json({
                     success: true,
@@ -297,7 +297,7 @@ const verifyJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const username = (recipient === null || recipient === void 0 ? void 0 : recipient.username) || '';
         const link = `${process.env.SITE_URL}/portfolio/jokes?login=login`;
         const language = (_k = joke === null || joke === void 0 ? void 0 : joke.language) !== null && _k !== void 0 ? _k : 'en';
-        (0, email_1.sendMail)(subject, message, username, language, link)
+        (0, email_1.sendMail)(subject, message, username, link)
             .then((response) => {
             console.log(email_1.EEmailSent[joke === null || joke === void 0 ? void 0 : joke.language], response);
             res.status(201).json({
@@ -383,7 +383,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             //     })
             //   })
             try {
-                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, language, link);
+                const mailResponse = yield (0, email_1.sendMail)(subject, message, adminEmail, link);
                 console.log(email_1.EEmailSent[body.language], mailResponse);
                 res.status(201).json({
                     success: true,

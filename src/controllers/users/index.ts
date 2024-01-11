@@ -463,6 +463,7 @@ const updateUsername = async (req: Request, res: Response): Promise<void> => {
     if (user) {
       const token = await generateToken(user._id)
       user.set('confirmToken', token)
+      user.verified = false
       user.markModified('verified')
       await user.save()
 
@@ -472,7 +473,7 @@ const updateUsername = async (req: Request, res: Response): Promise<void> => {
       const link = `${process.env.BASE_URI}/api/users/${username}/confirm-email/${token}?lang=${user.language}`
       const language = (user.language as unknown as ELanguage) || 'en'
       // Send confirmation email to new address
-      await sendMail(subject, message, username, language, link)
+      await sendMail(subject, message, username, link)
 
       res.status(200).json({
         success: true,
@@ -586,11 +587,10 @@ const confirmEmail = async (req: Request, res: Response): Promise<void> => {
       </html>
       `)
     } else if (user) {
-      user.verified = true
-      user.confirmToken = undefined
-      user.markModified('verified')
-      user.markModified('confirmToken')
-      await user.save()
+      await User.findOneAndUpdate(
+        { confirmToken: token },
+        { confirmToken: undefined, verified: true }
+      )
 
       const htmlResponse = `
       <html lang=${language ?? 'en'}>
@@ -864,6 +864,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
       try {
         //generate new token
         const refresh = await refreshExpiredToken(req, user._id)
+
         if (refresh?.success) {
           res.status(401).json({
             success: false,
@@ -934,7 +935,6 @@ const forgotPassword = async (req: Request, res: Response): Promise<void> => {
         EPasswordReset[language as unknown as ELanguage],
         EResetPassword[language as unknown as ELanguage],
         username,
-        language as unknown as ELanguage,
         link
       )
         .then((result) => {
@@ -1089,7 +1089,6 @@ const registerUser = async (req: Request, res: Response): Promise<void> => {
       EHelloWelcome[language as ELanguage],
       EEmailMessage[language as ELanguage],
       username,
-      language,
       link
     )
 
@@ -1212,7 +1211,6 @@ const refreshExpiredToken = async (
                   EHelloWelcome[body.language as keyof typeof EHelloWelcome],
                   EEmailMessage[body.language as keyof typeof EEmailMessage],
                   body.username,
-                  body.language as unknown as ELanguage,
                   link
                 )
                   .then((r) => {
@@ -1304,7 +1302,6 @@ const refreshExpiredToken = async (
                 EHelloWelcome[body.language as keyof typeof EHelloWelcome],
                 EEmailMessage[body.language as keyof typeof EHelloWelcome],
                 user.username,
-                body.language as unknown as ELanguage,
                 link
               )
                 .then((r) => {

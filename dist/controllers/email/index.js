@@ -42,7 +42,7 @@ const transporter = nodemailer.createTransport({
         pass: process.env.NODEMAILER_PASSWORD,
     },
 });
-const sendMail = (subject, message, username, language, link) => {
+const sendMail = (subject, message, username, link) => {
     return new Promise((resolve, reject) => {
         transporter.sendMail({
             from: process.env.NODEMAILER_USER,

@@ -221,7 +221,7 @@ const addJoke = async (req: Request, res: Response): Promise<void> => {
       const language = (joke.language as ELanguage) ?? 'en'
 
       try {
-        const mailResponse = await sendMail(subject, message, adminEmail, language, link)
+        const mailResponse = await sendMail(subject, message, adminEmail, link)
         console.log(EEmailSent[joke.language as ELanguage], mailResponse)
         res.status(201).json({
           success: true,
@@ -336,7 +336,7 @@ const verifyJoke = async (req: Request, res: Response): Promise<void> => {
     const username = recipient?.username || ''
     const link = `${process.env.SITE_URL}/portfolio/jokes?login=login`
     const language = (joke?.language as ELanguage) ?? 'en'
-    sendMail(subject, message, username, language, link)
+    sendMail(subject, message, username, link)
       .then((response) => {
         console.log(EEmailSent[joke?.language as ELanguage], response)
         res.status(201).json({
@@ -434,7 +434,7 @@ const updateJoke = async (req: Request, res: Response): Promise<void> => {
       //     })
       //   })
       try {
-        const mailResponse = await sendMail(subject, message, adminEmail, language, link)
+        const mailResponse = await sendMail(subject, message, adminEmail, link)
         console.log(EEmailSent[body.language as ELanguage], mailResponse)
         res.status(201).json({
           success: true,

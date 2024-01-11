@@ -499,6 +499,7 @@ const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (user) {
             const token = yield generateToken(user._id);
             user.set('confirmToken', token);
+            user.verified = false;
             user.markModified('verified');
             yield user.save();
             // Prepare email details
@@ -507,7 +508,7 @@ const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const link = `${process.env.BASE_URI}/api/users/${username}/confirm-email/${token}?lang=${user.language}`;
             const language = user.language || 'en';
             // Send confirmation email to new address
-            yield (0, email_1.sendMail)(subject, message, username, language, link);
+            yield (0, email_1.sendMail)(subject, message, username, link);
             res.status(200).json({
                 success: true,
                 message: EUpdatePending[user.language || 'en'],
@@ -620,11 +621,7 @@ const confirmEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* (
       `);
         }
         else if (user) {
-            user.verified = true;
-            user.confirmToken = undefined;
-            user.markModified('verified');
-            user.markModified('confirmToken');
-            yield user.save();
+            yield user_1.User.findOneAndUpdate({ confirmToken: token }, { confirmToken: undefined, verified: true });
             const htmlResponse = `
       <html lang=${language !== null && language !== void 0 ? language : 'en'}>
       <head> 
@@ -960,7 +957,7 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const link = `${process.env.BASE_URI}/api/users/reset/${token}?lang=${language}`;
             //User.findOneAndUpdate({ username }, { $set: { resetToken: token } })
             yield user_1.User.findOneAndUpdate({ username }, { resetToken: token });
-            yield (0, email_1.sendMail)(EPasswordReset[language], EResetPassword[language], username, language, link)
+            yield (0, email_1.sendMail)(EPasswordReset[language], EResetPassword[language], username, link)
                 .then((result) => {
                 console.log('result ', result);
                 res.status(200).json({
@@ -1098,7 +1095,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 error,
             });
         });
-        const sentEmail = yield (0, email_1.sendMail)(EHelloWelcome[language], EEmailMessage[language], username, language, link);
+        const sentEmail = yield (0, email_1.sendMail)(EHelloWelcome[language], EEmailMessage[language], username, link);
         if (savedUser && sentEmail) {
             res.status(201).json({
                 success: true,
@@ -1191,7 +1188,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                         token = yield generateToken(_id);
                         if (!(user === null || user === void 0 ? void 0 : user.verified)) {
                             const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${body.language}`;
-                            yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], body.username, body.language, link)
+                            yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], body.username, link)
                                 .then((r) => {
                                 reject({
                                     success: false,
@@ -1262,7 +1259,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                         user.markModified('token');
                         const link = `${process.env.BASE_URI}/api/users/verify/${token}?lang=${req.body.language}`;
                         yield user.save();
-                        yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], user.username, body.language, link)
+                        yield (0, email_1.sendMail)(EHelloWelcome[body.language], EEmailMessage[body.language], user.username, link)
                             .then((r) => {
                             resolve({
                                 success: true,
