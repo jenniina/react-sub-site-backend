@@ -49,6 +49,20 @@ const userSchema: Schema = new Schema(
       type: String,
       required: false,
     },
+    blacklistedJokes: [
+      {
+        jokeId: {
+          type: String,
+          required: false,
+          ref: 'Joke',
+        },
+        language: {
+          type: String,
+          required: false,
+          ref: 'Joke',
+        },
+      },
+    ],
   },
   { timestamps: true }
 )

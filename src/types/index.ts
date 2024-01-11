@@ -13,7 +13,14 @@ export interface IUser extends Document {
   confirmToken?: string
   createdAt?: string
   updatedAt?: string
+  blacklistedJokes?: IBlacklistedJoke[]
 }
+
+export interface IBlacklistedJoke {
+  jokeId: IJoke['jokeId']
+  language: ELanguages
+}
+
 export enum ECategory {
   all = 'All',
   misc = 'Misc',
