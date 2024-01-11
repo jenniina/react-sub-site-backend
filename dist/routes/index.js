@@ -24,18 +24,6 @@ router.get('/api/users/verify/:token', users_1.verifyEmailToken);
 router.get('/api/users/logout', users_1.logoutUser);
 //router.get('/api/users/verify/:token', [verifyTokenMiddleware, verifyEmailToken])
 router.post('/api/users/:id', users_1.generateToken);
-router.post('/api/users/change', users_1.changePassword);
-router.post('/api/users/change/:token', users_1.changePasswordToken);
-router.post('/api/users/verify', users_1.verifyEmail);
-router.post('/api/users/change', users_1.changeEmail);
-router.post('/api/users/change/:token', users_1.changeEmailToken);
-router.post('/api/users/verify', users_1.verifyUsername);
-router.get('/api/users/verify/:token', users_1.verifyUsernameToken);
-//router.post('/api/users/forgot', forgotUsername)
-router.get('/api/users/reset/:token', users_1.resetUsername);
-router.post('/api/users/reset/:token', users_1.resetUsernameToken);
-router.post('/api/users/change', users_1.changeUsername);
-router.post('/api/users/change/:token', users_1.changeUsernameToken);
 router.get('/api/users/username/:username', users_1.findUserByUsername);
 // router.post('/api/users/:id/delete', deleteAllJokesByUserId)
 // router.get('/api/users/:username/jokes', getJokesByUsername)
@@ -65,7 +53,7 @@ router.delete('/api/todo/:user', todo_1.clearCompletedTodos);
 router.get('/', (req, res) => {
     res.send('Nothing to see here');
 });
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const { sendEmailForm, sendEmailSelect } = require('../controllers/email');
 router.post('/api/send-email-form', [
     body('firstName').trim().escape(),
@@ -78,10 +66,31 @@ router.post('/api/send-email-form', [
     body('light').trim().escape(),
     body('select').trim().escape(),
     body('selectmulti').trim().escape(),
-], sendEmailForm);
+], (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            message: errors.array().join('\n'),
+            errors: errors.array(),
+        });
+    }
+    next();
+}, sendEmailForm);
 router.post('/api/send-email-select', [
     body('issues').trim().escape(),
     body('favoriteHero').trim().escape(),
     body('clarification').trim().escape(),
-], sendEmailSelect);
+    body('email').isEmail(),
+], (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            message: errors.array().join('\n'),
+            errors: errors.array(),
+        });
+    }
+    next();
+}, sendEmailSelect);
 exports.default = router;
