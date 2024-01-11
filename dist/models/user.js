@@ -54,12 +54,10 @@ const userSchema = new mongoose_1.Schema({
             jokeId: {
                 type: String,
                 required: false,
-                ref: 'Joke',
             },
             language: {
                 type: String,
                 required: false,
-                ref: 'Joke',
             },
         },
     ],

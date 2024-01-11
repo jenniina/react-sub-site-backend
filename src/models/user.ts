@@ -54,12 +54,10 @@ const userSchema: Schema = new Schema(
         jokeId: {
           type: String,
           required: false,
-          ref: 'Joke',
         },
         language: {
           type: String,
           required: false,
-          ref: 'Joke',
         },
       },
     ],
