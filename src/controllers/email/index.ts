@@ -55,7 +55,6 @@ export const sendMail = (
   subject: string,
   message: string,
   username: IUser['username'],
-  language: ELanguage,
   link: string
 ) => {
   return new Promise((resolve, reject) => {
