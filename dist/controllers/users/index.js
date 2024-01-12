@@ -2216,7 +2216,7 @@ const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0
     var _z;
     try {
         const { id, jokeId, language } = req.params;
-        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $pull: { blacklistedJokes: { jokeId, language } } }, { new: true });
+        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $pull: { blacklistedJokes: { $elemMatch: { jokeId, language } } } }, { new: true });
         if (user) {
             res.status(200).json({
                 success: true,

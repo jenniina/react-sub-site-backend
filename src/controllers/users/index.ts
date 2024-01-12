@@ -2335,7 +2335,7 @@ const removeJokeFromBlacklisted = async (req: Request, res: Response): Promise<v
     const { id, jokeId, language } = req.params
     const user = await User.findOneAndUpdate(
       { _id: id },
-      { $pull: { blacklistedJokes: { jokeId, language } } },
+      { $pull: { blacklistedJokes: { $elemMatch: { jokeId, language } } } },
       { new: true }
     )
     if (user) {
