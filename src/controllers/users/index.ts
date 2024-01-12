@@ -280,7 +280,6 @@ const generateToken = async (id: string | undefined): Promise<string | undefined
           console.error(err)
           reject(undefined)
         } else {
-          console.log('tokennnn', token)
           resolve(token)
         }
       })
@@ -294,7 +293,7 @@ const generateToken = async (id: string | undefined): Promise<string | undefined
 
 const verifyToken = (token: string) => {
   const secret: Secret = process.env.JWT_SECRET || 'sfj0ker8GJ3RT3s5djdf23'
-  console.log('TOKEN VERIFY', jwt.verify(token, secret))
+
   return jwt.verify(token, secret) as ITokenPayload
 }
 
@@ -307,9 +306,9 @@ const authenticateUser = async (
     const token = req.headers.authorization?.split(' ')[1]
     if (!token)
       throw new Error(ENoTokenProvided[(req.body.language as ELanguage) || 'en'])
-    console.log('TOKEN', token)
+
     const decoded = verifyToken(token)
-    console.log('Decoded:', decoded)
+
     if (!decoded) throw new Error('Token not decoded')
     const user: IUser | null = await User.findById(decoded?.userId)
     const language = user?.language || 'en'
@@ -828,7 +827,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
     const passwordMatch: boolean = await comparePassword.call(user, password)
     if (passwordMatch) {
       const token = await generateToken(user._id)
-      console.log('token', token)
+
       res.status(200).json({
         success: true,
         message: ESuccessfullyLoggedIn[user.language || 'en'],
