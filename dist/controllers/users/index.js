@@ -722,6 +722,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                         language: updatedUser.language,
                         role: updatedUser.role,
                         verified: updatedUser.verified,
+                        blacklistedJokes: updatedUser.blacklistedJokes,
                     },
                 });
                 return;
@@ -738,6 +739,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                     language: updatedUser.language,
                     role: updatedUser.role,
                     verified: updatedUser.verified,
+                    blacklistedJokes: updatedUser.blacklistedJokes,
                 },
             });
             return;
@@ -848,6 +850,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     language: user.language,
                     role: user.role,
                     verified: user.verified,
+                    blacklistedJokes: user.blacklistedJokes,
                 },
                 token,
             });
@@ -897,6 +900,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             language: user.language,
                             role: user.role,
                             verified: user.verified,
+                            blacklistedJokes: user.blacklistedJokes,
                         },
                         token: user.token,
                     });
@@ -926,6 +930,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         language: user.language,
                         role: user.role,
                         verified: user.verified,
+                        blacklistedJokes: user.blacklistedJokes,
                     },
                     token: user.token,
                 });
@@ -1201,6 +1206,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                                         language: user === null || user === void 0 ? void 0 : user.language,
                                         role: user === null || user === void 0 ? void 0 : user.role,
                                         verified: user === null || user === void 0 ? void 0 : user.verified,
+                                        blacklistedJokes: user === null || user === void 0 ? void 0 : user.blacklistedJokes,
                                     },
                                 });
                             })
@@ -1271,6 +1277,7 @@ const refreshExpiredToken = (req, _id) => __awaiter(void 0, void 0, void 0, func
                                     language: user.language,
                                     role: user.role,
                                     verified: user.verified,
+                                    blacklistedJokes: user.blacklistedJokes,
                                 },
                             });
                         })
@@ -1754,6 +1761,7 @@ const findUserByUsername = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 language: userByUsername === null || userByUsername === void 0 ? void 0 : userByUsername.language,
                 role: userByUsername === null || userByUsername === void 0 ? void 0 : userByUsername.role,
                 verified: userByUsername === null || userByUsername === void 0 ? void 0 : userByUsername.verified,
+                blacklistedJokes: userByUsername === null || userByUsername === void 0 ? void 0 : userByUsername.blacklistedJokes,
             },
         });
     }
