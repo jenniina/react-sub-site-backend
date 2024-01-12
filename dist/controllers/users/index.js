@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addToBlacklistedJokes = exports.comparePassword = exports.refreshExpiredToken = exports.requestNewToken = exports.findUserByUsername = exports.verifyToken = exports.verifyTokenMiddleware = exports.generateToken = exports.verifyEmailToken = exports.resetPasswordToken = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.registerUser = exports.loginUser = exports.deleteUser = exports.updateUser = exports.updateUsername = exports.confirmEmail = exports.addUser = exports.getUser = exports.getUsers = exports.authenticateUser = exports.checkIfAdmin = void 0;
+exports.removeJokeFromBlacklisted = exports.addToBlacklistedJokes = exports.comparePassword = exports.refreshExpiredToken = exports.requestNewToken = exports.findUserByUsername = exports.verifyToken = exports.verifyTokenMiddleware = exports.generateToken = exports.verifyEmailToken = exports.resetPasswordToken = exports.resetPassword = exports.forgotPassword = exports.logoutUser = exports.registerUser = exports.loginUser = exports.deleteUser = exports.updateUser = exports.updateUsername = exports.confirmEmail = exports.addUser = exports.getUser = exports.getUsers = exports.authenticateUser = exports.checkIfAdmin = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const types_1 = require("../../types");
 const user_1 = require("../../models/user");
@@ -2212,3 +2212,31 @@ const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.addToBlacklistedJokes = addToBlacklistedJokes;
+const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _z;
+    try {
+        const { id, jokeId, language } = req.params;
+        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $pull: { blacklistedJokes: { jokeId, language } } }, { new: true });
+        if (user) {
+            res.status(200).json({
+                success: true,
+                message: types_1.EJokeRestored[language || 'en'],
+                user,
+            });
+        }
+        else {
+            res.status(404).json({
+                success: false,
+                message: EError[language || 'en'],
+            });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: EError[((_z = req.body) === null || _z === void 0 ? void 0 : _z.language) || 'en'],
+        });
+    }
+});
+exports.removeJokeFromBlacklisted = removeJokeFromBlacklisted;

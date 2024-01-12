@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from 'express'
 import bcrypt from 'bcrypt'
 import {
   EJokeHidden,
+  EJokeRestored,
   EPleaseChooseAnotherName,
   EThisNameIsNotAvailable,
   IUser,
@@ -2329,6 +2330,35 @@ const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void>
   }
 }
 
+const removeJokeFromBlacklisted = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id, jokeId, language } = req.params
+    const user = await User.findOneAndUpdate(
+      { _id: id },
+      { $pull: { blacklistedJokes: { jokeId, language } } },
+      { new: true }
+    )
+    if (user) {
+      res.status(200).json({
+        success: true,
+        message: EJokeRestored[(language as ELanguage) || 'en'],
+        user,
+      })
+    } else {
+      res.status(404).json({
+        success: false,
+        message: EError[(language as ELanguage) || 'en'],
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({
+      success: false,
+      message: EError[(req.body?.language as ELanguage) || 'en'],
+    })
+  }
+}
+
 export {
   // verificationSuccess,
   checkIfAdmin,
@@ -2355,4 +2385,5 @@ export {
   refreshExpiredToken,
   comparePassword,
   addToBlacklistedJokes,
+  removeJokeFromBlacklisted,
 }
