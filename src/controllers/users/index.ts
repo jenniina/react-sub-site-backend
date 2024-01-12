@@ -2303,10 +2303,10 @@ const deleteUser = async (req: Request, res: Response): Promise<void> => {
 const addToBlacklistedJokes = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id, jokeId, language } = req.params
-    const { value } = req.body
+    const body = req.body
     const user = await User.findOneAndUpdate(
       { _id: id },
-      { $push: { blacklistedJokes: { jokeId, language, value } } },
+      { $push: { blacklistedJokes: { jokeId, language, body } } },
       { new: true }
     )
     if (user) {
