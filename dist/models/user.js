@@ -59,6 +59,10 @@ const userSchema = new mongoose_1.Schema({
                 type: String,
                 required: false,
             },
+            value: {
+                type: String,
+                required: false,
+            },
         },
     ],
 }, { timestamps: true });
