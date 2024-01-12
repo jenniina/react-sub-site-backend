@@ -223,3 +223,12 @@ export enum EJokeHidden {
   cs = 'Vtip skryt',
   fi = 'Vitsi piilotettu',
 }
+export enum EJokeRestored {
+  en = 'Joke restored',
+  es = 'Broma restaurada',
+  fr = 'Blague restaurée',
+  de = 'Witz wiederhergestellt',
+  pt = 'Piada restaurada',
+  cs = 'Vtip obnoven',
+  fi = 'Vitsi palautettu',
+}

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EJokeHidden = exports.EThisNameIsNotAvailable = exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
+exports.EJokeRestored = exports.EJokeHidden = exports.EThisNameIsNotAvailable = exports.EPleaseChooseAnotherName = exports.EUserDeletedFromJoke = exports.EJokeUpdated = exports.EEmailSentToAdministratorPleaseWaitForApproval = exports.EAnErrorOccurredAddingTheJoke = exports.EError = exports.ELanguage = exports.EQuizType = exports.ELanguages = exports.EJokeType = exports.ECategory = void 0;
 var ECategory;
 (function (ECategory) {
     ECategory["all"] = "All";
@@ -126,3 +126,13 @@ var EJokeHidden;
     EJokeHidden["cs"] = "Vtip skryt";
     EJokeHidden["fi"] = "Vitsi piilotettu";
 })(EJokeHidden || (exports.EJokeHidden = EJokeHidden = {}));
+var EJokeRestored;
+(function (EJokeRestored) {
+    EJokeRestored["en"] = "Joke restored";
+    EJokeRestored["es"] = "Broma restaurada";
+    EJokeRestored["fr"] = "Blague restaur\u00E9e";
+    EJokeRestored["de"] = "Witz wiederhergestellt";
+    EJokeRestored["pt"] = "Piada restaurada";
+    EJokeRestored["cs"] = "Vtip obnoven";
+    EJokeRestored["fi"] = "Vitsi palautettu";
+})(EJokeRestored || (exports.EJokeRestored = EJokeRestored = {}));
