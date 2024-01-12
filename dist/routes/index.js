@@ -12,7 +12,7 @@ router.post('/api/users/forgot', users_1.forgotPassword);
 router.get('/api/users/reset/:token', users_1.resetPassword);
 router.post('/api/users/reset/:token', users_1.resetPasswordToken);
 //router.get('/api/users', [authenticateUser, checkIfAdmin, getUsers])
-router.get('/api/users', users_1.getUsers);
+router.get('/api/users', [users_1.authenticateUser, users_1.getUsers]);
 router.get('/api/users/:id', users_1.getUser);
 //router.post('/api/users', addUser)
 router.put('/api/users/:id', [users_1.comparePassword, users_1.updateUser]);

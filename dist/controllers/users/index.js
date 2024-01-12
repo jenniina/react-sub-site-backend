@@ -306,7 +306,6 @@ const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
                     reject(undefined);
                 }
                 else {
-                    console.log('tokennnn', token);
                     resolve(token);
                 }
             });
@@ -321,7 +320,6 @@ const generateToken = (id) => __awaiter(void 0, void 0, void 0, function* () {
 exports.generateToken = generateToken;
 const verifyToken = (token) => {
     const secret = process.env.JWT_SECRET || 'sfj0ker8GJ3RT3s5djdf23';
-    console.log('TOKEN VERIFY', jsonwebtoken_1.default.verify(token, secret));
     return jsonwebtoken_1.default.verify(token, secret);
 };
 exports.verifyToken = verifyToken;
@@ -331,9 +329,7 @@ const authenticateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
         if (!token)
             throw new Error(ENoTokenProvided[req.body.language || 'en']);
-        console.log('TOKEN', token);
         const decoded = verifyToken(token);
-        console.log('Decoded:', decoded);
         if (!decoded)
             throw new Error('Token not decoded');
         const user = yield user_1.User.findById(decoded === null || decoded === void 0 ? void 0 : decoded.userId);
@@ -839,7 +835,6 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const passwordMatch = yield comparePassword.call(user, password);
         if (passwordMatch) {
             const token = yield generateToken(user._id);
-            console.log('token', token);
             res.status(200).json({
                 success: true,
                 message: ESuccessfullyLoggedIn[user.language || 'en'],
