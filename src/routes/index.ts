@@ -81,7 +81,7 @@ router.post('/api/users/:id', generateToken)
 router.get('/api/users/username/:username', findUserByUsername)
 // router.post('/api/users/:id/delete', deleteAllJokesByUserId)
 router.put('/api/users/:id/:jokeId/:language', addToBlacklistedJokes)
-router.delete('/api/users/:id/:jokeId/:language', removeJokeFromBlacklisted)
+router.delete('/api/users/:id/:joke_id/:language', removeJokeFromBlacklisted)
 
 // router.get('/api/users/:username/jokes', getJokesByUsername)
 router.get('/api/users/:id/categories/:category/jokes', getJokesByUserAndCategory)
