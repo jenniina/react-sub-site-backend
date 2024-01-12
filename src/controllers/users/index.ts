@@ -704,6 +704,7 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
             language: updatedUser.language,
             role: updatedUser.role,
             verified: updatedUser.verified,
+            blacklistedJokes: updatedUser.blacklistedJokes,
           },
         })
         return
@@ -722,6 +723,7 @@ const updateUser = async (req: Request, res: Response): Promise<void> => {
           language: updatedUser.language,
           role: updatedUser.role,
           verified: updatedUser.verified,
+          blacklistedJokes: updatedUser.blacklistedJokes,
         },
       })
       return
@@ -836,6 +838,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
           language: user.language,
           role: user.role,
           verified: user.verified,
+          blacklistedJokes: user.blacklistedJokes,
         },
         token,
       })
@@ -881,6 +884,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
               language: user.language,
               role: user.role,
               verified: user.verified,
+              blacklistedJokes: user.blacklistedJokes,
             },
             token: user.token,
           })
@@ -907,6 +911,7 @@ const loginUser = async (req: Request, res: Response): Promise<void> => {
             language: user.language,
             role: user.role,
             verified: user.verified,
+            blacklistedJokes: user.blacklistedJokes,
           },
           token: user.token,
         })
@@ -1164,7 +1169,10 @@ type TRefreshExpiredToken = {
   success: boolean
   message: string
   newToken?: string
-  user?: Pick<IUser, '_id' | 'name' | 'username' | 'language' | 'role' | 'verified'>
+  user?: Pick<
+    IUser,
+    '_id' | 'name' | 'username' | 'language' | 'role' | 'verified' | 'blacklistedJokes'
+  >
 }
 
 const refreshExpiredToken = async (
@@ -1235,6 +1243,7 @@ const refreshExpiredToken = async (
                         language: user?.language,
                         role: user?.role,
                         verified: user?.verified,
+                        blacklistedJokes: user?.blacklistedJokes,
                       },
                     })
                   })
@@ -1329,6 +1338,7 @@ const refreshExpiredToken = async (
                       language: user.language,
                       role: user.role,
                       verified: user.verified,
+                      blacklistedJokes: user.blacklistedJokes,
                     },
                   })
                 })
@@ -1845,6 +1855,7 @@ const findUserByUsername = async (req: Request, res: Response): Promise<void> =>
         language: userByUsername?.language,
         role: userByUsername?.role,
         verified: userByUsername?.verified,
+        blacklistedJokes: userByUsername?.blacklistedJokes,
       },
     })
   } catch (error) {
