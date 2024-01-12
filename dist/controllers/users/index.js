@@ -2213,11 +2213,14 @@ const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.addToBlacklistedJokes = addToBlacklistedJokes;
 const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _z;
+    var _z, _0;
     try {
         const { id, jokeId, language } = req.params;
-        const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $pull: { blacklistedJokes: { $elemMatch: { jokeId, language } } } }, { new: true });
+        const user = yield user_1.User.findById(id);
         if (user) {
+            user.blacklistedJokes = (_z = user.blacklistedJokes) === null || _z === void 0 ? void 0 : _z.filter((joke) => joke.jokeId !== jokeId || joke.language !== language);
+            user.markModified('blacklistedJokes');
+            yield user.save();
             res.status(200).json({
                 success: true,
                 message: types_1.EJokeRestored[language || 'en'],
@@ -2235,7 +2238,7 @@ const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0
         console.error(error);
         res.status(500).json({
             success: false,
-            message: EError[((_z = req.body) === null || _z === void 0 ? void 0 : _z.language) || 'en'],
+            message: EError[((_0 = req.body) === null || _0 === void 0 ? void 0 : _0.language) || 'en'],
         });
     }
 });
