@@ -19,6 +19,7 @@ export interface IUser extends Document {
 export interface IBlacklistedJoke {
   jokeId: IJoke['jokeId']
   language: ELanguages
+  value: string
 }
 
 export enum ECategory {
