@@ -564,16 +564,14 @@ const findJokeByJokeIdLanguageCategoryType = async (
 //     console.error('Error:', error)
 //   }
 // }
-
 const getJokesByUserId = async (req: Request, res: Response): Promise<void> => {
   try {
-    const jokes: IJoke[] | null = await Joke.findOne({ user: req.params.id })
-    res.status(200).json({ jokes })
+    const jokes: IJoke[] = await Joke.find({ user: { $in: [req.params.id] } })
+    res.status(200).json(jokes)
   } catch (error) {
     throw error
   }
 }
-
 const getJokesByUserAndCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     const jokes: IJoke[] | null = await Joke.findOne({
