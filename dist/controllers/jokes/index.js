@@ -501,8 +501,8 @@ exports.findJokeByJokeIdLanguageCategoryType = findJokeByJokeIdLanguageCategoryT
 // }
 const getJokesByUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const jokes = yield joke_1.Joke.findOne({ user: req.params.id });
-        res.status(200).json({ jokes });
+        const jokes = yield joke_1.Joke.find({ user: { $in: [req.params.id] } });
+        res.status(200).json(jokes);
     }
     catch (error) {
         throw error;
