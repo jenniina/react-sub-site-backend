@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
-import mongoose, { ConnectOptions } from 'mongoose'
+import mongoose from 'mongoose'
 import cors from 'cors'
-import jokeRoutes from './routes'
+import routes from './routes'
 
 require('dotenv').config()
 
@@ -13,7 +13,7 @@ app.use(cors())
 app.use(express.json())
 // Middleware to parse URL-encoded form data
 app.use(express.urlencoded({ extended: true }))
-app.use(jokeRoutes)
+app.use(routes)
 app.use(express.static('dist'))
 
 const uri: string = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}.zzpvtsc.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
