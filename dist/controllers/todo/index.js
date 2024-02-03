@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editTodoOrder = exports.clearCompletedTodos = exports.editTodo = exports.deleteTodo = exports.addTodo = exports.updateAllTodos = exports.getTodos = void 0;
 const todo_1 = require("../../models/todo");
+const mongoose_1 = __importDefault(require("mongoose"));
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { user } = req.params;
@@ -138,23 +142,30 @@ const editTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.editTodo = editTodo;
 const editTodoOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { user, key } = req.params;
-        const todoDocument = yield todo_1.Todo.findOne({
-            user,
-            'todos.key': key,
-        });
-        if (!todoDocument) {
-            return res.status(404).json({ message: 'No todos found for this user' });
+        const { user } = req.params;
+        const todosWithNewOrder = req.body.todos; // This should be an array of objects with keys: { key, order }
+        if (!todosWithNewOrder || !Array.isArray(todosWithNewOrder)) {
+            return res
+                .status(400)
+                .json({ message: 'Todos field is required and it should be an array' });
         }
-        const { order } = req.body;
-        if (order === undefined) {
-            return res.status(400).json({ message: 'Order field is required' });
+        const session = yield mongoose_1.default.startSession();
+        session.startTransaction();
+        for (const todo of todosWithNewOrder) {
+            const { key, order } = todo;
+            const updatedTodoDocument = yield todo_1.Todo.findOneAndUpdate({ user, 'todos.key': key }, { $set: { 'todos.$.order': order } }, { new: true, session });
+            if (!updatedTodoDocument) {
+                yield session.abortTransaction();
+                session.endSession();
+                return res
+                    .status(404)
+                    .json({ message: `No todo found for this user with key: ${key}` });
+            }
         }
-        const updatedTodoDocument = yield todo_1.Todo.findOneAndUpdate({ user, 'todos.key': key }, { $set: { 'todos.$.order': order } }, { new: true });
-        if (!updatedTodoDocument) {
-            return res.status(404).json({ message: 'No todos found for this user' });
-        }
-        res.json(updatedTodoDocument);
+        yield session.commitTransaction();
+        session.endSession();
+        const updatedTodos = yield todo_1.Todo.findOne({ user });
+        res.json(updatedTodos);
     }
     catch (error) {
         console.error(error);

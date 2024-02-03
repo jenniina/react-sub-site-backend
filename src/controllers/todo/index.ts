@@ -1,6 +1,7 @@
 import { Todo } from '../../models/todo'
 import { Response, Request } from 'express'
 import { ITodo, ITodos } from '../../types'
+import mongoose from 'mongoose'
 
 const getTodos = async (req: Request, res: Response) => {
   try {
@@ -146,27 +147,39 @@ const editTodo = async (req: Request, res: Response) => {
 
 const editTodoOrder = async (req: Request, res: Response) => {
   try {
-    const { user, key } = req.params
-    const todoDocument = await Todo.findOne({
-      user,
-      'todos.key': key,
-    })
-    if (!todoDocument) {
-      return res.status(404).json({ message: 'No todos found for this user' })
+    const { user } = req.params
+    const todosWithNewOrder = req.body.todos // This should be an array of objects with keys: { key, order }
+
+    if (!todosWithNewOrder || !Array.isArray(todosWithNewOrder)) {
+      return res
+        .status(400)
+        .json({ message: 'Todos field is required and it should be an array' })
     }
-    const { order } = req.body
-    if (order === undefined) {
-      return res.status(400).json({ message: 'Order field is required' })
+
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
+    for (const todo of todosWithNewOrder) {
+      const { key, order } = todo
+      const updatedTodoDocument = await Todo.findOneAndUpdate(
+        { user, 'todos.key': key },
+        { $set: { 'todos.$.order': order } },
+        { new: true, session }
+      )
+      if (!updatedTodoDocument) {
+        await session.abortTransaction()
+        session.endSession()
+        return res
+          .status(404)
+          .json({ message: `No todo found for this user with key: ${key}` })
+      }
     }
-    const updatedTodoDocument = await Todo.findOneAndUpdate(
-      { user, 'todos.key': key },
-      { $set: { 'todos.$.order': order } },
-      { new: true }
-    )
-    if (!updatedTodoDocument) {
-      return res.status(404).json({ message: 'No todos found for this user' })
-    }
-    res.json(updatedTodoDocument)
+
+    await session.commitTransaction()
+    session.endSession()
+
+    const updatedTodos = await Todo.findOne({ user })
+    res.json(updatedTodos)
   } catch (error) {
     console.error(error)
     res
