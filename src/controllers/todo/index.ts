@@ -124,7 +124,7 @@ const editTodo = async (req: Request, res: Response) => {
     const { user, key } = req.params
     const todoDocument = await Todo.findOneAndUpdate(
       { user, 'todos.key': key },
-      { $set: { 'todos.$.complete': req.body.complete } },
+      { $set: { 'todos.$.complete': req.body.complete, 'todos.$.name': req.body.name } },
       { new: true }
     )
     if (!todoDocument) {

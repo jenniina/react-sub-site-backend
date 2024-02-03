@@ -121,7 +121,7 @@ exports.clearCompletedTodos = clearCompletedTodos;
 const editTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { user, key } = req.params;
-        const todoDocument = yield todo_1.Todo.findOneAndUpdate({ user, 'todos.key': key }, { $set: { 'todos.$.complete': req.body.complete } }, { new: true });
+        const todoDocument = yield todo_1.Todo.findOneAndUpdate({ user, 'todos.key': key }, { $set: { 'todos.$.complete': req.body.complete, 'todos.$.name': req.body.name } }, { new: true });
         if (!todoDocument) {
             return res.status(404).json({ message: 'No todos found for this user' });
         }
