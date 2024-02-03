@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearCompletedTodos = exports.editTodo = exports.deleteTodo = exports.addTodo = exports.updateAllTodos = exports.getTodos = void 0;
+exports.addOrderToAllTodos = exports.editTodoOrder = exports.clearCompletedTodos = exports.editTodo = exports.deleteTodo = exports.addTodo = exports.updateAllTodos = exports.getTodos = void 0;
 const todo_1 = require("../../models/todo");
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -65,12 +65,13 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).json({ message: 'No todos found for this user' });
         }
         const { complete, name, key } = req.body;
+        const maxOrder = todoDocument.todos.reduce((max, todo) => (todo.order > max ? todo.order : max), 0);
         if (complete === undefined || name === undefined || key === undefined) {
             return res
                 .status(400)
                 .json({ message: 'Task must include complete, name, and key fields' });
         }
-        const newTodo = { complete, name, key };
+        const newTodo = { complete, name, key, order: maxOrder + 1 };
         const updatedTodoDocument = yield todo_1.Todo.findOneAndUpdate({ user }, { $push: { todos: newTodo } }, { new: true, useFindAndModify: false });
         if (!updatedTodoDocument) {
             return res.status(404).json({ message: 'No todos found for this user' });
@@ -135,3 +136,49 @@ const editTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.editTodo = editTodo;
+const editTodoOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { user, key } = req.params;
+        const todoDocument = yield todo_1.Todo.findOne({
+            user,
+            'todos.key': key,
+        });
+        if (!todoDocument) {
+            return res.status(404).json({ message: 'No todos found for this user' });
+        }
+        const { order } = req.body;
+        if (order === undefined) {
+            return res.status(400).json({ message: 'Order field is required' });
+        }
+        const updatedTodoDocument = yield todo_1.Todo.findOneAndUpdate({ user, 'todos.key': key }, { $set: { 'todos.$.order': order } }, { new: true });
+        if (!updatedTodoDocument) {
+            return res.status(404).json({ message: 'No todos found for this user' });
+        }
+        res.json(updatedTodoDocument);
+    }
+    catch (error) {
+        console.error(error);
+        res
+            .status(500)
+            .json({ message: `Internal server error. ${error.message}` });
+    }
+});
+exports.editTodoOrder = editTodoOrder;
+//temporary:
+const addOrderToAllTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const todos = yield todo_1.Todo.find({});
+        for (let todoDocument of todos) {
+            let order = 0;
+            for (let todo of todoDocument.todos) {
+                todo.order = order++;
+            }
+            yield todoDocument.save();
+        }
+        res.json({ message: 'Order added to all todos' });
+    }
+    catch (error) {
+        console.error(error);
+    }
+});
+exports.addOrderToAllTodos = addOrderToAllTodos;

@@ -57,12 +57,17 @@ const addTodo = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'No todos found for this user' })
     }
     const { complete, name, key } = req.body
+    const maxOrder = todoDocument.todos.reduce(
+      (max: number, todo: ITodo) => (todo.order > max ? todo.order : max),
+      0
+    )
+
     if (complete === undefined || name === undefined || key === undefined) {
       return res
         .status(400)
         .json({ message: 'Task must include complete, name, and key fields' })
     }
-    const newTodo = { complete, name, key }
+    const newTodo = { complete, name, key, order: maxOrder + 1 }
     const updatedTodoDocument = await Todo.findOneAndUpdate(
       { user },
       { $push: { todos: newTodo } },
@@ -139,4 +144,61 @@ const editTodo = async (req: Request, res: Response) => {
   }
 }
 
-export { getTodos, updateAllTodos, addTodo, deleteTodo, editTodo, clearCompletedTodos }
+const editTodoOrder = async (req: Request, res: Response) => {
+  try {
+    const { user, key } = req.params
+    const todoDocument = await Todo.findOne({
+      user,
+      'todos.key': key,
+    })
+    if (!todoDocument) {
+      return res.status(404).json({ message: 'No todos found for this user' })
+    }
+    const { order } = req.body
+    if (order === undefined) {
+      return res.status(400).json({ message: 'Order field is required' })
+    }
+    const updatedTodoDocument = await Todo.findOneAndUpdate(
+      { user, 'todos.key': key },
+      { $set: { 'todos.$.order': order } },
+      { new: true }
+    )
+    if (!updatedTodoDocument) {
+      return res.status(404).json({ message: 'No todos found for this user' })
+    }
+    res.json(updatedTodoDocument)
+  } catch (error) {
+    console.error(error)
+    res
+      .status(500)
+      .json({ message: `Internal server error. ${(error as Error).message}` })
+  }
+}
+//temporary:
+const addOrderToAllTodos = async (req: Request, res: Response) => {
+  try {
+    const todos = await Todo.find({})
+
+    for (let todoDocument of todos) {
+      let order = 0
+      for (let todo of todoDocument.todos) {
+        todo.order = order++
+      }
+      await todoDocument.save()
+    }
+
+    res.json({ message: 'Order added to all todos' })
+  } catch (error) {
+    console.error(error)
+  }
+}
+export {
+  getTodos,
+  updateAllTodos,
+  addTodo,
+  deleteTodo,
+  editTodo,
+  clearCompletedTodos,
+  editTodoOrder,
+  addOrderToAllTodos,
+}

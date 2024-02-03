@@ -10,6 +10,10 @@ const taskSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    order: {
+      type: Number,
+      required: true,
+    },
     complete: {
       type: Boolean,
       required: true,

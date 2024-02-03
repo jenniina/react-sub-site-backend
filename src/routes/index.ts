@@ -13,6 +13,8 @@ import {
   deleteTodo,
   editTodo,
   clearCompletedTodos,
+  editTodoOrder,
+  addOrderToAllTodos,
 } from '../controllers/todo'
 
 import {
@@ -114,6 +116,8 @@ router.post('/api/todo/:user', addTodo)
 router.delete('/api/todo/:user/:key', deleteTodo)
 router.put('/api/todo/:user/:key', editTodo)
 router.delete('/api/todo/:user', clearCompletedTodos)
+router.put('/api/todo/:user/:key/order', editTodoOrder)
+router.put('/api/todo/add-order', addOrderToAllTodos)
 
 router.get('/', (req, res) => {
   res.send('Nothing to see here')
