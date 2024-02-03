@@ -11,6 +11,10 @@ const taskSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    order: {
+        type: Number,
+        required: true,
+    },
     complete: {
         type: Boolean,
         required: true,

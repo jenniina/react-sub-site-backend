@@ -128,6 +128,7 @@ export interface IQuizQuestion extends Document {
 export interface ITodo extends Document {
   key: string
   name: string
+  order: number
   complete: boolean
   createdAt?: string
   updatedAt?: string
