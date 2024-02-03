@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addOrderToAllTodos = exports.editTodoOrder = exports.clearCompletedTodos = exports.editTodo = exports.deleteTodo = exports.addTodo = exports.updateAllTodos = exports.getTodos = void 0;
+exports.editTodoOrder = exports.clearCompletedTodos = exports.editTodo = exports.deleteTodo = exports.addTodo = exports.updateAllTodos = exports.getTodos = void 0;
 const todo_1 = require("../../models/todo");
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -164,21 +164,3 @@ const editTodoOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.editTodoOrder = editTodoOrder;
-//temporary:
-const addOrderToAllTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const todos = yield todo_1.Todo.find({});
-        for (let todoDocument of todos) {
-            let order = 0;
-            for (let todo of todoDocument.todos) {
-                todo.order = order++;
-            }
-            yield todoDocument.save();
-        }
-        res.json({ message: 'Order added to all todos' });
-    }
-    catch (error) {
-        console.error(error);
-    }
-});
-exports.addOrderToAllTodos = addOrderToAllTodos;

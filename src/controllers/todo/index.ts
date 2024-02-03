@@ -174,24 +174,25 @@ const editTodoOrder = async (req: Request, res: Response) => {
       .json({ message: `Internal server error. ${(error as Error).message}` })
   }
 }
-//temporary:
-const addOrderToAllTodos = async (req: Request, res: Response) => {
-  try {
-    const todos = await Todo.find({})
 
-    for (let todoDocument of todos) {
-      let order = 0
-      for (let todo of todoDocument.todos) {
-        todo.order = order++
-      }
-      await todoDocument.save()
-    }
+// const addOrderToAllTodos = async (req: Request, res: Response) => {
+//   try {
+//     const todos = await Todo.find({})
 
-    res.json({ message: 'Order added to all todos' })
-  } catch (error) {
-    console.error(error)
-  }
-}
+//     for (let todoDocument of todos) {
+//       let order = 0
+//       for (let todo of todoDocument.todos) {
+//         todo.order = order++
+//       }
+//       await todoDocument.save()
+//     }
+
+//     res.json({ message: 'Order added to all todos' })
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
+
 export {
   getTodos,
   updateAllTodos,
@@ -200,5 +201,5 @@ export {
   editTodo,
   clearCompletedTodos,
   editTodoOrder,
-  addOrderToAllTodos,
+  // addOrderToAllTodos,
 }
