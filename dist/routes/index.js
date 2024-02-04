@@ -52,7 +52,7 @@ router.post('/api/todo/:user', todo_1.addTodo);
 router.delete('/api/todo/:user/:key', todo_1.deleteTodo);
 router.put('/api/todo/:user/:key', todo_1.editTodo);
 router.delete('/api/todo/:user', todo_1.clearCompletedTodos);
-router.put('/api/todo/:user/order', todo_1.editTodoOrder);
+router.post('/api/todo/:user/order', todo_1.editTodoOrder);
 //router.put('/api/todo', addOrderToAllTodos)
 router.get('/', (req, res) => {
     res.send('Nothing to see here');
