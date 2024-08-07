@@ -359,9 +359,9 @@ exports.authenticateUser = authenticateUser;
 //   }
 // }
 const verifyTokenMiddleware = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _a;
     try {
-        const token = (_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1];
+        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
         if (!token)
             throw new Error(ENoTokenProvided[req.body.language || 'en']);
         const decoded = verifyToken(token);
@@ -527,7 +527,7 @@ const updateUsername = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.updateUsername = updateUsername;
 const confirmEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _a;
     let EEmailConfirmed;
     (function (EEmailConfirmed) {
         EEmailConfirmed["en"] = "Email Confirmed";
@@ -609,7 +609,7 @@ const confirmEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* (
           </h1>
           <p>${ELogInAtTheAppOrRequestANewEmailConfirmToken[language || 'en']}</p> 
           <p>
-          <a href=${process.env.SITE_URL}/?login=login>${(_c = EBackToTheApp[language]) !== null && _c !== void 0 ? _c : 'Back to the app'}</a>
+          <a href=${process.env.SITE_URL}/?login=login>${(_a = EBackToTheApp[language]) !== null && _a !== void 0 ? _a : 'Back to the app'}</a>
           </p>
         </div>
       </body>
@@ -677,7 +677,7 @@ const confirmEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.confirmEmail = confirmEmail;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _a;
     try {
         const { 
         // params: { _id: _id },
@@ -723,7 +723,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 });
                 return;
             }
-            user.set('language', (_d = body.language) !== null && _d !== void 0 ? _d : 'en');
+            user.set('language', (_a = body.language) !== null && _a !== void 0 ? _a : 'en');
             const updatedUser = yield user.save();
             res.status(200).json({
                 success: true,
@@ -1406,7 +1406,7 @@ const requestNewToken = (req, res) => __awaiter(void 0, void 0, void 0, function
             });
         }
     }
-    catch (_e) {
+    catch (_a) {
         res.status(500).json({
             success: false,
             message: `${EError[language]}. ${EErrorCreatingToken} *`,
@@ -1517,7 +1517,7 @@ exports.requestNewToken = requestNewToken;
 //   }
 // }
 const verifyEmailToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f, _g, _h, _j;
+    var _a, _b, _c, _d;
     try {
         const token = req.params.token;
         const user = yield user_1.User.findOneAndUpdate({ token }, { $set: { verified: true, token: undefined } });
@@ -1589,10 +1589,10 @@ const verifyEmailToken = (req, res) => __awaiter(void 0, void 0, void 0, functio
       </head>
       <body>
       <div>
-        <h1>${(_f = EVerificationSuccessful[language]) !== null && _f !== void 0 ? _f : 'Verification successful'}</h1>
-        <p>${(_g = EAccountSuccessfullyVerified[language]) !== null && _g !== void 0 ? _g : 'Account successfully verified'}.</p>
+        <h1>${(_a = EVerificationSuccessful[language]) !== null && _a !== void 0 ? _a : 'Verification successful'}</h1>
+        <p>${(_b = EAccountSuccessfullyVerified[language]) !== null && _b !== void 0 ? _b : 'Account successfully verified'}.</p>
         <p>
-        <a href=${process.env.SITE_URL}/?login=login>${(_h = EBackToTheApp[language]) !== null && _h !== void 0 ? _h : 'Back to the app'}</a>
+        <a href=${process.env.SITE_URL}/?login=login>${(_c = EBackToTheApp[language]) !== null && _c !== void 0 ? _c : 'Back to the app'}</a>
         </p>
       </div>
       </body>
@@ -1654,7 +1654,7 @@ const verifyEmailToken = (req, res) => __awaiter(void 0, void 0, void 0, functio
       <div>
         <h1>${EVerificationFailed[language]}</p>
         <p>
-        <a href=${process.env.SITE_URL}>${(_j = EBackToTheApp[language]) !== null && _j !== void 0 ? _j : 'Back to the app'}</a>
+        <a href=${process.env.SITE_URL}>${(_d = EBackToTheApp[language]) !== null && _d !== void 0 ? _d : 'Back to the app'}</a>
         </p>
       </div>
       </body>
@@ -1792,7 +1792,7 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.logoutUser = logoutUser;
 const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k, _l, _m, _o, _p;
+    var _a, _b, _c, _d, _e;
     const { token } = req.params;
     const language = req.query.lang || 'en';
     try {
@@ -1846,7 +1846,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         <p>${ELogInAtTheAppOrRequestANewPasswordResetToken[language] ||
                 'Check the app to request a new password reset token. '}</p> 
         <p>
-        <a href=${process.env.SITE_URL}>${(_k = EBackToTheApp[language]) !== null && _k !== void 0 ? _k : 'Back to the app'}</a>
+        <a href=${process.env.SITE_URL}>${(_a = EBackToTheApp[language]) !== null && _a !== void 0 ? _a : 'Back to the app'}</a>
         </p>
       </div>
       </body>
@@ -1933,17 +1933,17 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
       <div>
         <h1>${EJenniinaFi[language || 'en']}
         </h1>
-        <h2>${(_l = EPasswordReset[language]) !== null && _l !== void 0 ? _l : 'Password Reset'}</h2>
+        <h2>${(_b = EPasswordReset[language]) !== null && _b !== void 0 ? _b : 'Password Reset'}</h2>
         <form action="/api/users/reset/${token}?lang=${language}" method="post">
           <div>
-            <label for="newPassword">${(_m = ENewPassword[language]) !== null && _m !== void 0 ? _m : 'New password'}:</label>
+            <label for="newPassword">${(_c = ENewPassword[language]) !== null && _c !== void 0 ? _c : 'New password'}:</label>
             <input type="password" id="newPassword" name="newPassword" required>
           </div>
           <div>
-            <label for="confirmPassword">${(_o = EConfirmPassword[language]) !== null && _o !== void 0 ? _o : 'Confirm Password'}:</label>
+            <label for="confirmPassword">${(_d = EConfirmPassword[language]) !== null && _d !== void 0 ? _d : 'Confirm Password'}:</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
           </div>
-          <button type="submit">${(_p = EResetPassword[language]) !== null && _p !== void 0 ? _p : 'Reset password'}</button>
+          <button type="submit">${(_e = EResetPassword[language]) !== null && _e !== void 0 ? _e : 'Reset password'}</button>
         </form> 
       </div>
       </body>
@@ -1959,7 +1959,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.resetPassword = resetPassword;
 const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _q, _r, _s, _t, _u, _v;
+    var _a, _b, _c, _d, _e, _f;
     const { token } = req.params;
     const { newPassword, confirmPassword } = req.body;
     const language = req.query.lang || 'en';
@@ -2068,14 +2068,14 @@ const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
       </head>
       <body>
       <div>
-        <h1>${(_q = EPasswordReset[language]) !== null && _q !== void 0 ? _q : 'Password Reset'}</h1>
+        <h1>${(_a = EPasswordReset[language]) !== null && _a !== void 0 ? _a : 'Password Reset'}</h1>
         <form action="/api/users/reset/${token}?lang=${language}" method="post">
-        <label for="newPassword">${(_r = ENewPassword[language]) !== null && _r !== void 0 ? _r : 'New password'}:</label>
+        <label for="newPassword">${(_b = ENewPassword[language]) !== null && _b !== void 0 ? _b : 'New password'}:</label>
         <input type="password" id="newPassword" name="newPassword" required>
-        <label for="confirmPassword">${(_s = EConfirmPassword[language]) !== null && _s !== void 0 ? _s : 'Confirm Password'}:</label>
+        <label for="confirmPassword">${(_c = EConfirmPassword[language]) !== null && _c !== void 0 ? _c : 'Confirm Password'}:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" required>
-        <p>${(_t = EPasswordsDoNotMatch[language]) !== null && _t !== void 0 ? _t : 'Passwords do not match!'}</p>
-        <button type="submit">${(_u = EResetPassword[language]) !== null && _u !== void 0 ? _u : 'Reset password'}</button>
+        <p>${(_d = EPasswordsDoNotMatch[language]) !== null && _d !== void 0 ? _d : 'Passwords do not match!'}</p>
+        <button type="submit">${(_e = EResetPassword[language]) !== null && _e !== void 0 ? _e : 'Reset password'}</button>
       </form> 
       </div>
       </body>
@@ -2138,7 +2138,7 @@ const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
       <div>
         <h1>${EPasswordResetSuccessfully[language] || 'Password reset successfully'}</h1>
         <p>
-        <a href=${process.env.SITE_URL}/?login=login>${(_v = EBackToTheApp[language]) !== null && _v !== void 0 ? _v : 'Back to the app'}</a>
+        <a href=${process.env.SITE_URL}/?login=login>${(_f = EBackToTheApp[language]) !== null && _f !== void 0 ? _f : 'Back to the app'}</a>
         </p>
       </div>
       </body>
@@ -2158,7 +2158,7 @@ const resetPasswordToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.resetPasswordToken = resetPasswordToken;
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _w, _x;
+    var _a, _b;
     try {
         const { id } = req.params;
         yield todo_1.Todo.deleteMany({ user: id });
@@ -2167,20 +2167,20 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         yield user_1.User.deleteOne({ _id: id });
         res.status(200).json({
             success: true,
-            message: EUserDeleted[((_w = req.body) === null || _w === void 0 ? void 0 : _w.language) || 'en'],
+            message: EUserDeleted[((_a = req.body) === null || _a === void 0 ? void 0 : _a.language) || 'en'],
         });
     }
     catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: EError[((_x = req.body) === null || _x === void 0 ? void 0 : _x.language) || 'en'],
+            message: EError[((_b = req.body) === null || _b === void 0 ? void 0 : _b.language) || 'en'],
         });
     }
 });
 exports.deleteUser = deleteUser;
 const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _y;
+    var _a;
     try {
         const { id, jokeId, language } = req.params;
         const { value } = req.body;
@@ -2209,13 +2209,13 @@ const addToBlacklistedJokes = (req, res) => __awaiter(void 0, void 0, void 0, fu
         console.error(error);
         res.status(500).json({
             success: false,
-            message: EError[((_y = req.body) === null || _y === void 0 ? void 0 : _y.language) || 'en'],
+            message: EError[((_a = req.body) === null || _a === void 0 ? void 0 : _a.language) || 'en'],
         });
     }
 });
 exports.addToBlacklistedJokes = addToBlacklistedJokes;
 const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _z;
+    var _a;
     try {
         const { id, joke_id, language } = req.params;
         const user = yield user_1.User.findOneAndUpdate({ _id: id }, { $pull: { blacklistedJokes: { _id: joke_id } } }, { new: true });
@@ -2237,7 +2237,7 @@ const removeJokeFromBlacklisted = (req, res) => __awaiter(void 0, void 0, void 0
         console.error(error);
         res.status(500).json({
             success: false,
-            message: EError[((_z = req.body) === null || _z === void 0 ? void 0 : _z.language) || 'en'],
+            message: EError[((_a = req.body) === null || _a === void 0 ? void 0 : _a.language) || 'en'],
         });
     }
 });
