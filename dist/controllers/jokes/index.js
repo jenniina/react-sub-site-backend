@@ -277,7 +277,7 @@ const addJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.addJoke = addJoke;
 const verifyJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _k;
+    var _a;
     let EYourJokeHasBeenVerified;
     (function (EYourJokeHasBeenVerified) {
         EYourJokeHasBeenVerified["en"] = "Your joke has been verified";
@@ -296,7 +296,7 @@ const verifyJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const recipient = yield user_1.User.findOne({ _id: author });
         const username = (recipient === null || recipient === void 0 ? void 0 : recipient.username) || '';
         const link = `${process.env.SITE_URL}/portfolio/jokes?login=login`;
-        const language = (_k = joke === null || joke === void 0 ? void 0 : joke.language) !== null && _k !== void 0 ? _k : 'en';
+        const language = (_a = joke === null || joke === void 0 ? void 0 : joke.language) !== null && _a !== void 0 ? _a : 'en';
         (0, email_1.sendMail)(subject, message, username, link)
             .then((response) => {
             console.log(email_1.EEmailSent[joke === null || joke === void 0 ? void 0 : joke.language], response);
@@ -328,7 +328,7 @@ const verifyJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.verifyJoke = verifyJoke;
 const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _l;
+    var _a;
     try {
         const { 
         // params: { _id },
@@ -361,7 +361,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .join(', ')}, ${body.type === types_1.EJokeType.twopart && body.setup ? body.setup : ''}, ${body.type === types_1.EJokeType.twopart && body.delivery ? body.delivery : ''}, ${body.type === types_1.EJokeType.single && body.body ? body.body : ''}`;
             const adminEmail = process.env.NODEMAILER_USER || '';
             const link = `${process.env.BASE_URI}/api/jokes/${findJoke._id}/verification`;
-            const language = (_l = body.language) !== null && _l !== void 0 ? _l : 'en';
+            const language = (_a = body.language) !== null && _a !== void 0 ? _a : 'en';
             // sendMail(subject, message, adminEmail, language, link)
             //   .then((response) => {
             //     console.log(EEmailSent[body.language as ELanguage], response)
@@ -420,7 +420,7 @@ const updateJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.updateJoke = updateJoke;
 const deleteUserFromJoke = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _m;
+    var _a;
     try {
         const { params: { id: _id, userId }, } = req;
         const joke = yield joke_1.Joke.findOne({ _id: _id });
@@ -434,7 +434,7 @@ const deleteUserFromJoke = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         res.status(200).json({
             success: true,
-            message: types_1.EUserDeletedFromJoke[(_m = joke === null || joke === void 0 ? void 0 : joke.language) !== null && _m !== void 0 ? _m : 'en'],
+            message: types_1.EUserDeletedFromJoke[(_a = joke === null || joke === void 0 ? void 0 : joke.language) !== null && _a !== void 0 ? _a : 'en'],
             joke,
         });
     }
